@@ -1,0 +1,890 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Plataforma de Proyectos · MDreieck</title>
+<meta name="theme-color" content="#24216F">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap">
+<script src="config.js"></script>
+<style>
+:root{
+  --bg:#F3F3F7; --surface:#FFFFFF; --surface-2:#EEEEF5; --line:#DAD9E6;
+  --ink:#1B1A3A; --ink-2:#4A4A66; --mute:#6B6B85;
+  --navy:#24216F; --navy-2:#2F2B95; --on-navy:#FFFFFF; --on-navy-2:#C9C8EE;
+  --accent:#E8833F; --accent-ink:#A9480F; --accent-soft:#FBE3D2;
+  --ok:#1F5A85; --ok-bg:#E1ECF5; --ok-strong:#2F6E9E; --warn:#9A3F12; --warn-bg:#FBE3D2; --pend:#5A6574; --pend-bg:#E7E6EE;
+  --new:#FFF1D6; --danger:#9A3F12;
+  --f-display:"Space Grotesk","Segoe UI",Arial,sans-serif; --f-body:Inter,"Segoe UI",Arial,sans-serif; --f-mono:"JetBrains Mono",Consolas,monospace;
+  --r:12px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F0F22; --surface:#191936; --surface-2:#23234A; --line:#33335C; --ink:#EEEEFA; --ink-2:#C2C2DC; --mute:#9696B4;
+  --navy:#14123F; --navy-2:#26236E; --on-navy:#FFFFFF; --on-navy-2:#B4B3E2; --accent:#F0935A; --accent-ink:#F4AE80; --accent-soft:#3A2618;
+  --ok:#9CC8EC; --ok-bg:#1B3450; --ok-strong:#5E9CCB; --warn:#F4AE80; --warn-bg:#3A2618; --pend:#B0B0C8; --pend-bg:#2A2A4E; --new:#3A3018; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F0F22; --surface:#191936; --surface-2:#23234A; --line:#33335C; --ink:#EEEEFA; --ink-2:#C2C2DC; --mute:#9696B4;
+  --navy:#14123F; --navy-2:#26236E; --on-navy:#FFFFFF; --on-navy-2:#B4B3E2; --accent:#F0935A; --accent-ink:#F4AE80; --accent-soft:#3A2618;
+  --ok:#9CC8EC; --ok-bg:#1B3450; --ok-strong:#5E9CCB; --warn:#F4AE80; --warn-bg:#3A2618; --pend:#B0B0C8; --pend-bg:#2A2A4E; --new:#3A3018; color-scheme:dark}
+
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.45;min-height:100vh}
+h1,h2,h3{font-family:var(--f-display);margin:0;color:var(--ink);text-wrap:balance}
+p{margin:0}
+button,select,input,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+button:disabled{cursor:not-allowed;opacity:.5}
+a{color:var(--ok)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.tnum{font-variant-numeric:tabular-nums}
+.eyebrow{font-size:12px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink)}
+
+/* ---------- login ---------- */
+.login{min-height:100vh;display:grid;place-items:center;padding:24px max(16px,env(safe-area-inset-left,0px))}
+.lcard{width:100%;max-width:420px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:28px;display:flex;flex-direction:column;gap:16px;box-shadow:0 18px 40px -24px rgba(19,38,59,.45)}
+.lcard h1{font-size:28px;line-height:1.1}
+.lcard p{color:var(--ink-2);font-size:14px}
+.field label{display:block;font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-bottom:5px}
+.field input,.field select,.field textarea{width:100%;background:var(--surface-2);border:1px solid var(--line);border-radius:8px;padding:9px 11px;font-size:14.5px}
+.btn{border:none;background:var(--accent);color:#1B1A3A;font-weight:700;border-radius:9px;padding:10px 16px;font-size:14.5px;white-space:nowrap}
+.btn.dark{background:var(--navy);color:var(--on-navy)}
+.btn.ghost{background:var(--surface);border:1px solid var(--line);color:var(--ink)}
+.btn.sm{padding:6px 11px;font-size:13px;border-radius:7px}
+.err{background:var(--warn-bg);color:var(--warn);border-radius:8px;padding:9px 12px;font-size:13.5px;font-weight:600}
+details.adv summary{font-size:13px;color:var(--mute);cursor:pointer}
+details.adv .field{margin-top:8px}
+
+/* ---------- estructura ---------- */
+.shell{min-height:100vh;display:flex;flex-direction:column}
+.bar{background:var(--navy);color:var(--on-navy);display:flex;align-items:center;gap:12px;padding:10px max(16px,env(safe-area-inset-right,0px)) 10px max(16px,env(safe-area-inset-left,0px));position:sticky;top:0;z-index:20}
+.brand{font-family:var(--f-display);font-weight:700;font-size:16px;white-space:nowrap;display:flex;align-items:center;gap:8px}
+.brand .lg{background:#fff;border-radius:8px;padding:4px 7px;display:flex}
+.brand .lg img{height:24px;display:block}
+.lcard .lg{background:#fff;border-radius:12px;padding:8px 12px;align-self:flex-start;border:1px solid var(--line)}
+.lcard .lg img{height:46px;display:block}
+.search{flex:1;min-width:0;max-width:520px;background:var(--navy-2);border:none;border-radius:8px;padding:7px 12px;color:var(--on-navy);font-size:13.5px}
+.search::placeholder{color:var(--on-navy-2)}
+.bar .sp{flex:1}
+.barbtn{background:var(--navy-2);border:none;color:var(--on-navy);border-radius:8px;padding:7px 11px;font-size:13px;font-weight:600;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.who{font-size:12.5px;color:var(--on-navy-2);white-space:nowrap}
+.upd{font-size:12px;color:var(--on-navy-2);white-space:nowrap}
+.body{flex:1;display:grid;grid-template-columns:240px minmax(0,1fr)}
+.side{background:var(--surface-2);border-right:1px solid var(--line);padding:16px 12px;display:flex;flex-direction:column;gap:6px}
+.side .lbl{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--mute);padding:0 8px;margin-top:4px}
+.proj{all:unset;box-sizing:border-box;display:block;cursor:pointer;padding:9px 10px;border-radius:8px;border-left:4px solid transparent;font-size:14px;color:var(--ink-2);width:100%}
+.proj b{display:block;color:var(--ink);font-weight:600}
+.proj small{font-size:12px;color:var(--mute)}
+.proj .mini{height:4px;border-radius:4px;background:var(--line);margin-top:6px;overflow:hidden}
+.proj .mini i{display:block;height:100%;background:var(--accent)}
+.proj[aria-current="true"]{background:var(--surface);border-left-color:var(--accent)}
+.proj:focus-visible{outline:2px solid var(--accent)}
+.side .newp{margin-top:6px}
+.arch{font-size:13px;color:var(--mute);padding:4px 8px}
+.arch summary{cursor:pointer}
+.archrow{display:flex;justify-content:space-between;align-items:center;gap:6px;margin-top:6px;color:var(--ink-2)}
+.cardform textarea{font:inherit}
+.side .hint{margin-top:auto;font-size:12.5px;color:var(--mute);padding:8px;border-top:1px solid var(--line)}
+.side .hint a{font-weight:600}
+.main{padding:20px max(16px,env(safe-area-inset-right,0px)) 40px 22px;display:flex;flex-direction:column;gap:16px;min-width:0;max-width:1240px}
+.phead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:10px}
+.phead h2{font-size:24px}
+.phead small{display:block;color:var(--mute);font-size:13px;margin-top:2px}
+.phead small a{margin-left:8px;font-weight:600}
+.pays{display:flex;align-items:center;gap:8px;flex-wrap:wrap;font-size:13px}
+.pays .t{color:var(--mute);font-weight:600;margin-right:4px}
+.pay{border:none;border-radius:999px;padding:4px 12px;background:var(--pend-bg);color:var(--pend);white-space:nowrap;font-size:13px}
+.pay.done{background:var(--ok-bg);color:var(--ok)}
+.pay.now{background:var(--accent-soft);color:var(--warn);font-weight:600}
+.pay.click{cursor:pointer;text-decoration:underline dotted}
+.pays .sep{width:14px;height:2px;background:var(--line)}
+.confirm{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:14px}
+
+.kpis{display:grid;grid-template-columns:1.3fr repeat(3,minmax(0,1fr));gap:10px}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:11px 13px;min-width:0}
+.kpi span{font-size:12.5px;color:var(--mute);display:block}
+.kpi b{font-family:var(--f-display);font-size:28px;line-height:1.15;font-variant-numeric:tabular-nums}
+.kpi.alert b{color:var(--warn)}
+.meter{height:8px;border-radius:6px;background:var(--line);margin-top:6px;position:relative}
+.meter i{display:block;height:100%;background:var(--accent);border-radius:6px;transition:width .6s}
+.meter em{position:absolute;top:-4px;width:2px;height:16px;background:var(--ink);transform:translateX(-1px)}
+.kpi .sub{font-size:12.5px;color:var(--ink-2);margin-top:6px}
+.kpi .sub strong{color:var(--warn)}
+
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);overflow-x:auto}
+.tab{all:unset;box-sizing:border-box;cursor:pointer;padding:9px 12px;font-size:14px;font-weight:600;color:var(--mute);border-bottom:3px solid transparent;white-space:nowrap;display:flex;gap:6px;align-items:center}
+.tab[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--accent)}
+.tab:focus-visible{outline:2px solid var(--accent)}
+.count{font-size:11.5px;background:var(--surface-2);border-radius:999px;padding:1px 7px;color:var(--ink-2)}
+.count.hot{background:var(--warn-bg);color:var(--warn)}
+.panel{min-width:0;display:flex;flex-direction:column;gap:16px}
+.h4{font-family:var(--f-display);font-size:16px;font-weight:600}
+.empty{background:var(--surface);border:1px dashed var(--line);border-radius:10px;padding:22px;color:var(--mute);font-size:14px;text-align:center}
+
+/* gantt */
+.gwrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.gantt{min-width:700px;padding:10px 14px 12px}
+.grow{display:grid;grid-template-columns:170px minmax(0,1fr) 100px;gap:10px;align-items:center;min-height:40px}
+.grow .gn{font-size:13.5px;font-weight:600}
+.grow .gn small{display:block;font-weight:400;color:var(--mute);font-size:12px}
+.track{position:relative;height:26px}
+.months{position:relative;height:20px;font-size:11.5px;color:var(--mute)}
+.months span{position:absolute;top:0;border-left:1px solid var(--line);padding-left:4px;height:100%;white-space:nowrap}
+.gbar{position:absolute;top:4px;height:18px;border-radius:5px;background:var(--pend-bg);border:1px solid var(--line)}
+.gbar i{position:absolute;inset:0 auto 0 0;background:var(--ok-strong);border-radius:4px}
+.gbar.late i{background:var(--accent)}
+.gbar b,.gbar button.pct{position:absolute;left:calc(100% + 6px);top:-1px;font-size:12px;font-weight:700;color:var(--ink);line-height:18px;white-space:nowrap}
+.gbar button.pct{border:none;background:none;padding:0;text-decoration:underline dotted;cursor:pointer}
+.today{position:absolute;top:0;bottom:0;width:0;border-left:2px dashed var(--accent);pointer-events:none}
+.gbody .grow:first-child .today::before{content:"Hoy";position:absolute;top:-18px;left:-14px;font-size:11px;font-weight:700;color:var(--accent-ink);background:var(--surface);padding:0 3px}
+.gstat{justify-self:end}
+.gedit{display:flex;gap:6px;align-items:center;font-size:13px;padding:0 0 8px 180px}
+.gedit input{width:80px;background:var(--surface-2);border:1px solid var(--line);border-radius:6px;padding:4px 7px}
+
+/* kanban */
+.board{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.col{background:var(--surface-2);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.col h3{font-size:13.5px;display:flex;justify-content:space-between;align-items:center;color:var(--ink-2);font-family:var(--f-body);font-weight:700}
+.task{background:var(--surface);border:1px solid var(--line);border-radius:9px;padding:10px;display:flex;flex-direction:column;gap:6px}
+.task.late{border-left:4px solid var(--accent)}
+.task b{font-size:13.5px;line-height:1.3}
+.tmeta{display:flex;flex-wrap:wrap;gap:4px 8px;font-size:12px;color:var(--mute)}
+.tprog{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--ink-2)}
+.tprog .meter{flex:1;height:6px;margin:0}
+.tact{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.tact .auto{font-size:11.5px;color:var(--ok);font-weight:600}
+.mv{border:1px solid var(--line);background:var(--surface-2);border-radius:6px;padding:2px 9px;font-size:12px;font-weight:600}
+.addt{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:end;background:var(--surface-2);border-radius:10px;padding:10px}
+.addt label{display:block;font-size:11.5px;font-weight:700;color:var(--mute);margin-bottom:3px}
+.addt input,.addt select{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:13.5px}
+
+/* bitácora */
+.filters{display:flex;flex-wrap:wrap;gap:6px}
+.chip{border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:4px 12px;font-size:13px;font-weight:600;color:var(--ink-2)}
+.chip[aria-pressed="true"]{background:var(--navy);border-color:var(--navy);color:var(--on-navy)}
+.feed{display:flex;flex-direction:column;gap:10px}
+.entry{display:grid;grid-template-columns:auto minmax(0,1fr);gap:12px;padding:12px;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+.etype{width:40px;height:40px;border-radius:10px;display:grid;place-items:center}
+.etype svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ty-Entrega{background:var(--ok-bg);color:var(--ok)}
+.ty-Falla{background:var(--warn-bg);color:var(--warn)}
+.ty-Proceso{background:var(--surface-2);color:var(--ink)}
+.ty-Observacion{background:var(--pend-bg);color:var(--pend)}
+.etop{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:baseline}
+.etop b{font-size:14.5px}
+.etop .meta{font-size:12.5px;color:var(--mute)}
+.entry p{font-size:14px;color:var(--ink-2);margin-top:3px}
+.thumbs{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.thumbs a{display:block;width:72px;height:54px;border-radius:6px;border:1px solid var(--line);overflow:hidden;background:var(--surface-2);font-size:11px;color:var(--mute);text-decoration:none}
+.thumbs img{width:100%;height:100%;object-fit:cover;display:block}
+.thumbs a span{display:grid;place-items:center;height:100%}
+.emeta{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--mute);margin-top:6px}
+.emeta a{font-weight:600}
+.more{align-self:center}
+
+/* tablas */
+.tscroll{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:760px}
+th{text-align:left;font-size:12px;letter-spacing:.04em;text-transform:uppercase;color:var(--mute);background:var(--surface-2);padding:9px 12px;font-weight:700}
+td{padding:9px 12px;border-top:1px solid var(--line);vertical-align:top}
+td.file{font-family:var(--f-mono);font-size:12px;word-break:break-all}
+.pill{display:inline-block;font-size:12px;font-weight:600;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.p-ok{background:var(--ok-bg);color:var(--ok)}
+.p-warn{background:var(--warn-bg);color:var(--warn)}
+.p-pend{background:var(--pend-bg);color:var(--pend)}
+
+/* subir documento */
+.docbar{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;font-size:13.5px;color:var(--ink-2)}
+.upform,.cardform{background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.ufields{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.ufields .wide{grid-column:span 2}
+.ufields label,.cardform label{display:block;font-size:11.5px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--mute);margin-bottom:4px}
+.ufields select,.ufields input,.cardform input,.cardform select,.cardform textarea{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:7px 9px;font-size:13.5px}
+.ufile{display:flex;flex-wrap:wrap;align-items:center;gap:12px}
+.upick{border:1.5px dashed var(--ok);color:var(--ok);border-radius:8px;padding:7px 14px;font-weight:700;font-size:13.5px;cursor:pointer;background:var(--surface)}
+.uname{font-size:13px;color:var(--ink-2);font-family:var(--f-mono);word-break:break-all}
+.uprev{border-radius:8px;padding:10px 12px;background:var(--surface);border:1px solid var(--line);display:flex;flex-direction:column;gap:3px;font-size:12.5px;color:var(--mute)}
+.uprev.ready{border-color:var(--ok);background:var(--ok-bg);color:var(--ok)}
+.mono-n{font-family:var(--f-mono);font-size:13.5px;color:var(--ink);word-break:break-all}
+.uact{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+
+/* sitios */
+.sitesHead{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center;font-size:13.5px;color:var(--ink-2)}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--mute)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:5px}
+.sites{display:grid;grid-template-columns:repeat(auto-fill,minmax(60px,1fr));gap:6px}
+.site{border-radius:8px;padding:8px 4px;text-align:center;font-size:12.5px;font-weight:600;font-variant-numeric:tabular-nums}
+.site.i{background:var(--ok-strong);color:#fff}
+.site.d{background:var(--ok-bg);color:var(--ok)}
+.site.p{border:1.5px dashed var(--line);color:var(--mute)}
+.site.part{background:var(--warn-bg);color:var(--warn)}
+
+/* fotografías */
+.sitepick{display:flex;flex-wrap:wrap;gap:6px}
+.sitepick .chip b{font-weight:700;margin-left:4px;color:var(--mute)}
+.sitepick .chip[aria-pressed="true"] b{color:var(--on-navy-2)}
+.fhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.fhead b{font-family:var(--f-display);font-size:17px}
+.fhead small{display:block;color:var(--mute);font-size:12.5px}
+.fhead .links{display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-size:13.5px}
+.fhead .links a{font-weight:600}
+.etapa{display:flex;flex-direction:column;gap:8px}
+.etapa h4{margin:0;font-size:14px;font-weight:700;display:flex;gap:8px;align-items:center}
+.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px}
+.ph{background:var(--surface);border:1px solid var(--line);border-radius:10px;overflow:hidden;display:flex;flex-direction:column;text-decoration:none;color:inherit}
+.ph .im{aspect-ratio:4/3;background:var(--surface-2);display:grid;place-items:center;color:var(--mute);font-size:12px}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph span.c{padding:6px 8px;font-size:12px;color:var(--ink-2);line-height:1.35}
+.ph span.c em{display:block;font-style:normal;color:var(--mute)}
+/* inventario */
+.chk-ok{color:var(--ok);font-weight:700}
+td.n,th.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+.bar2{height:6px;border-radius:4px;background:var(--line);overflow:hidden;display:flex;min-width:80px;margin-top:4px}
+.bar2 i{display:block;height:100%;background:var(--ok-strong)}
+.bar2 i+i{background:var(--accent)}
+.invsum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.cattext{width:100%;min-height:150px;font-family:var(--f-mono);font-size:12.5px;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:9px 11px;resize:vertical}
+.ser{font-family:var(--f-mono);font-size:12px;word-break:break-all}
+td.th{white-space:nowrap}
+td.th a{display:inline-block;width:46px;height:36px;border-radius:5px;overflow:hidden;border:1px solid var(--line);margin-right:3px;vertical-align:middle;background:var(--surface-2);font-size:10px;color:var(--mute);text-decoration:none}
+td.th img{width:100%;height:100%;object-fit:cover;display:block}
+
+/* fallas */
+.fails{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.fail{border:1px solid var(--line);border-radius:10px;padding:12px 14px;background:var(--surface);display:flex;flex-direction:column;gap:8px}
+.fail .ft{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.fail .ft b{font-size:14px}
+.kv{display:grid;grid-template-columns:86px minmax(0,1fr);gap:4px 10px;font-size:13px;margin:0}
+.kv dt{color:var(--mute);font-weight:600}
+.kv dd{margin:0;color:var(--ink-2)}
+
+/* nuevo proyecto */
+.npgrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.npgrid .wide{grid-column:1 / -1}
+.etable{width:100%;min-width:640px}
+.etable td,.etable th{padding:6px 8px}
+.etable input,.etable select{width:100%;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 8px;font-size:13.5px}
+.x{border:none;background:none;color:var(--mute);font-size:18px;line-height:1;padding:4px 8px}
+
+.toast{position:fixed;right:max(16px,env(safe-area-inset-right,0px));bottom:calc(16px + env(safe-area-inset-bottom,0px));background:var(--navy);color:var(--on-navy);border-radius:10px;padding:11px 15px;font-size:14px;box-shadow:0 10px 30px -10px rgba(0,0,0,.5);max-width:min(520px,calc(100% - 32px));transform:translateY(12px);opacity:0;transition:.3s;pointer-events:none;z-index:50}
+.toast.show{transform:none;opacity:1}
+.toast b{color:var(--accent)}
+.toast.bad{background:#7A2E0B}
+.loading{display:flex;align-items:center;gap:10px;color:var(--mute);font-size:14px;padding:30px 0}
+.spin{width:18px;height:18px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:sp 0.9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+
+@media (max-width:900px){
+  .body{grid-template-columns:minmax(0,1fr)}
+  .who,.brand span{display:none}
+  .side{flex-direction:row;overflow-x:auto;border-right:none;border-bottom:1px solid var(--line);padding:10px;align-items:stretch}
+  .side .lbl,.side .hint{display:none}
+  .proj{flex:none;width:auto;min-width:200px}
+  .side .newp{margin-top:0;flex:none}
+  .main{padding-left:max(16px,env(safe-area-inset-left,0px))}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .kpis .kpi:first-child{grid-column:1 / -1}
+  .invsum{grid-template-columns:1fr 1fr}
+  .gal{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .board{grid-template-columns:1fr}
+  .addt{grid-template-columns:1fr 1fr}
+  .addt .wide{grid-column:1 / -1}
+  .ufields,.npgrid{grid-template-columns:1fr 1fr}
+  .bar .search,.upd{display:none}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<!-- INICIO DE SESIÓN -->
+<section class="login" id="vLogin" hidden>
+  <form class="lcard" id="fLogin" novalidate>
+    <span class="lg"><img src="logo.png" alt="MDreieck"></span>
+    <div><div class="eyebrow">MDreieck · Sistemas de Alerta Temprana</div><h1>Plataforma de Proyectos</h1></div>
+    <p>Avance y documentación de cada proyecto. Entra con la clave que te dio el administrador.</p>
+    <div class="field"><label for="lClave">Clave de acceso</label><input id="lClave" type="password" autocomplete="current-password" required></div>
+    <details class="adv"><summary>Servidor</summary>
+      <div class="field"><label for="lApi">URL de Apps Script (termina en /exec)</label><input id="lApi" type="url"></div>
+    </details>
+    <div class="err" id="lErr" hidden></div>
+    <button class="btn" type="submit" id="lBtn">Entrar</button>
+    <p style="font-size:13px">¿Eres técnico de campo? Usa la <a href="app.html">app de campo</a>.</p>
+  </form>
+</section>
+
+<!-- PLATAFORMA -->
+<div class="shell" id="vApp" hidden>
+  <header class="bar">
+    <span class="brand"><span class="lg"><img src="logo.png" alt="MDreieck"></span><span>Plataforma de Proyectos</span></span>
+    <input class="search" id="q" type="search" placeholder="Buscar actividad, documento, sitio o falla…" aria-label="Buscar en el proyecto">
+    <span class="sp"></span>
+    <span class="upd" id="upd"></span>
+    <button class="barbtn" id="bRefresh" type="button" title="Actualizar datos">↻ Actualizar</button>
+    <span class="who" id="who"></span>
+    <button class="barbtn" id="bOut" type="button">Salir</button>
+  </header>
+  <div class="body">
+    <nav class="side" aria-label="Proyectos">
+      <div class="lbl">Proyectos</div>
+      <div id="projList" style="display:contents"></div>
+      <button class="btn sm ghost newp" id="bNewP" type="button" hidden>+ Nuevo proyecto</button>
+      <div id="archList" style="display:contents"></div>
+      <p class="hint">Lo que se captura en la <a href="app.html">app de campo</a> llega aquí con sitio, fecha, fotos y GPS.</p>
+    </nav>
+    <main class="main" id="main"><div class="loading"><span class="spin"></span>Cargando proyectos…</div></main>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+"use strict";
+/* ================= utilidades ================= */
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const pad=n=>String(n).padStart(2,"0");
+const D=s=>{const m=String(s||"").match(/^(\d{4})-(\d{2})-(\d{2})/);return m?new Date(+m[1],m[2]-1,+m[3]):null};
+const MES=["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+const fmt=s=>{const d=D(s);return d?`${d.getDate()} ${MES[d.getMonth()]}`:"—"};
+const iso=d=>`${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}},del(k){try{localStorage.removeItem(k)}catch(e){}}};
+const plain=s=>String(s).normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^A-Za-z0-9]+/g,"_").replace(/^_|_$/g,"");
+const camel=s=>plain(s).split("_").filter(Boolean).map(w=>w[0].toUpperCase()+w.slice(1)).join("");
+const range=n=>Array.from({length:n},(_,i)=>i+1);
+
+/* ================= servidor ================= */
+let API=store.get("pp_api")||(window.PLATAFORMA_CONFIG||{}).API_URL||"";
+let CLAVE=store.get("pp_clave")||"";
+async function apiGet(params){
+  const u=new URL(API);Object.entries(params).forEach(([k,v])=>u.searchParams.set(k,v));
+  const r=await fetch(u.toString(),{redirect:"follow"});
+  const j=await r.json().catch(()=>{throw new Error("El servidor no respondió con datos. Revisa la URL.")});
+  if(!j.ok)throw new Error(j.error||"Error del servidor");return j;
+}
+async function apiPost(body){
+  const r=await fetch(API,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify(Object.assign({clave:CLAVE},body)),redirect:"follow"});
+  const j=await r.json().catch(()=>{throw new Error("El servidor no respondió con datos.")});
+  if(!j.ok)throw new Error(j.error||"Error del servidor");return j;
+}
+
+/* ================= estado ================= */
+let DATA=null,USER=null,HOY=iso(new Date()),cur=store.get("pp_proy")||"",tab=store.get("pp_tab")||"avance";
+let view="proyecto";             // proyecto | nuevo
+let fotoSitio="",invView="check",invSitio="",catDraft=null,catText="",tplUrl="";
+let upOpen=false,logFilter="Todos",logLimit=40,editEtapa=null,confirmHito=null,resolving=null,busy=false;
+const up={tipo:"",titulo:"",etapa:"",sitio:"GRAL",ver:"Final",file:null,nota:""};
+const canEdit=()=>USER&&["admin","editor"].includes(USER.rol);
+const isAdmin=()=>USER&&USER.rol==="admin";
+
+/* ================= cálculos ================= */
+const P=()=>(DATA&&DATA.proyectos||[]).find(p=>p.id_proyecto===cur);
+const cnt=p=>({total:p.sitios.length||p.sitios_total||0,entregados:p.sitios.filter(s=>s.entregado).length,instalados:p.sitios.filter(s=>s.instalado).length});
+function realOf(p,s){const c=cnt(p);if(s.medida_avance==="entregados")return c.total?c.entregados/c.total:0;if(s.medida_avance==="instalados")return c.total?c.instalados/c.total:0;return Math.max(0,Math.min(1,(+s.avance_manual||0)/100))}
+function progOf(s){const a=D(s.inicio_plan),b=D(s.fin_plan),h=D(HOY);if(!a||!b||b<=a)return 0;return Math.max(0,Math.min(1,(h-a)/(b-a)))}
+function stageStatus(p,s){const r=realOf(p,s),g=progOf(s),a=D(s.inicio_plan);
+  if(r>=1)return["Completa","p-ok"];if(a&&D(HOY)<a&&r===0)return["Por iniciar","p-pend"];if(r+0.1<g)return["Atrasada","p-warn"];return["A tiempo","p-ok"]}
+function overall(p){const W=p.etapas.reduce((a,s)=>a+(+s.peso||0),0);const w=s=>W?(+s.peso||0)/W:1/(p.etapas.length||1);return{real:p.etapas.reduce((a,s)=>a+realOf(p,s)*w(s),0),prog:p.etapas.reduce((a,s)=>a+progOf(s)*w(s),0)}}
+const ST={"Por hacer":"todo","En curso":"doing","Hecho":"done"};
+function taskState(p,t){if(t.medida_auto){const c=cnt(p),v=t.medida_auto==="instalados"?c.instalados:c.entregados;return c.total&&v>=c.total?"done":v>0?"doing":"todo"}return ST[t.estado]||"todo"}
+const isLate=(p,t)=>taskState(p,t)!=="done"&&t.fecha_limite&&D(t.fecha_limite)<D(HOY);
+function hitosView(p){let now=false;return p.hitos.map(h=>{if(h.estado==="Cumplido")return Object.assign({},h,{st:"done"});if(!now){now=true;return Object.assign({},h,{st:"now"})}return Object.assign({},h,{st:"todo"})})}
+const siteName=(p,id,lugar)=>{const n=+String(id||"").replace(/\D/g,"");if(!n)return lugar?`Otro lugar · ${lugar}`:"Otro lugar";const s=(p.sitios||[]).find(x=>x.numero===n);return `Sitio ${pad(n)}${s&&s.nombre?" · "+s.nombre:""}`};
+const match=txt=>{const q=$("#q").value.trim().toLowerCase();return !q||String(txt).toLowerCase().includes(q)};
+const TYPE_LBL={Proceso:"Proceso",Falla:"Falla",Observacion:"Observación",Entrega:"Entrega de materiales"};
+const ICONS={Entrega:'<svg viewBox="0 0 24 24"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>',
+  Falla:'<svg viewBox="0 0 24 24"><path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17.5v.5"/></svg>',
+  Proceso:'<svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg>',
+  Observacion:'<svg viewBox="0 0 24 24"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>'};
+const DOC_TIPOS={"Orden de compra":"OrdenCompra","Factura":"Factura","Cotización":"Cotizacion","Contrato":"Contrato","Acta de entrega de materiales":"ActaEntrega","Reporte de instalación":"ReporteInstalacion","Reporte de mantenimiento":"ReporteMantenimiento","Programa de trabajo":"Programa","Plano o croquis":"Plano","Minuta de reunión":"Minuta","Oficio":"Oficio","Fotografías":"Fotos","Otro documento":"Documento"};
+
+/* ================= carga ================= */
+async function load(silent){
+  if(busy)return;busy=true;
+  if(!silent&&!DATA)$("#main").innerHTML='<div class="loading"><span class="spin"></span>Cargando proyectos…</div>';
+  try{
+    const j=await apiGet({action:"datos",clave:CLAVE});
+    DATA=j;USER=j.usuario;HOY=j.hoy||HOY;
+    if(!DATA.proyectos.find(p=>p.id_proyecto===cur))cur=(DATA.proyectos[0]||{}).id_proyecto||"";
+    const d=new Date();$("#upd").textContent=`Actualizado ${d.getHours()}:${pad(d.getMinutes())}`;
+    $("#who").textContent=`${USER.nombre} · ${USER.rol}`;
+    $("#bNewP").hidden=!isAdmin();
+    render();
+  }catch(e){
+    if(/clave/i.test(e.message)){logout(e.message);}
+    else if(!silent||!DATA){$("#main").innerHTML=`<div class="err">No se pudieron cargar los datos: ${esc(e.message)}</div><div><button class="btn sm ghost" id="bRetry">Reintentar</button></div>`;$("#bRetry").onclick=()=>load();}
+    else toast("Sin conexión con el servidor. Se reintentará.",true);
+  }finally{busy=false}
+}
+function render(){renderProjects();renderMain()}
+
+/* ================= menú de proyectos ================= */
+function renderProjects(){
+  const list=DATA.proyectos;
+  $("#projList").innerHTML=list.map(p=>{const o=overall(p),late=p.actividades.filter(t=>isLate(p,t)).length;
+    return `<button class="proj" data-p="${esc(p.id_proyecto)}" aria-current="${p.id_proyecto===cur&&view!=="nuevo"}"><b>${esc(p.nombre)}</b><small>Avance ${Math.round(o.real*100)}% · ${late} atrasada${late===1?"":"s"}</small><div class="mini"><i style="width:${o.real*100}%"></i></div></button>`}).join("");
+  const ar=(DATA.archivados||[]);$("#archList").innerHTML=isAdmin()&&ar.length?`<details class="arch"><summary>Archivados (${ar.length})</summary>${ar.map(a=>`<div class="archrow"><span>${esc(a.nombre)}</span><button class="btn sm ghost" data-rest="${esc(a.id_proyecto)}" type="button">Restaurar</button></div>`).join("")}</details>`:"";
+  document.querySelectorAll("[data-rest]").forEach(b=>b.onclick=()=>{b.disabled=true;apiPost({action:"restaurarProyecto",id_proyecto:b.dataset.rest}).then(async()=>{cur=b.dataset.rest;toast("Proyecto restaurado");await load(true)}).catch(e=>{b.disabled=false;toast(e.message,true)})});
+  document.querySelectorAll(".proj").forEach(b=>b.onclick=()=>{view="proyecto";NP=null;fotoSitio="";invSitio="";catDraft=null;catText="";cur=b.dataset.p;store.set("pp_proy",cur);view="proyecto";upOpen=false;editEtapa=null;resolving=null;confirmHito=null;editSite=null;render()});
+}
+
+/* ================= vista principal ================= */
+function renderMain(){
+  const m=$("#main");
+  if(view==="nuevo"||view==="editar"){renderNuevo();return}
+  const p=P();
+  if(!p){m.innerHTML=`<div class="empty">Todavía no hay proyectos. ${isAdmin()?'Crea el primero con “+ Nuevo proyecto”.':'Pide al administrador que cree uno.'}</div>`;return}
+  const o=overall(p),c=cnt(p),real=Math.round(o.real*100),prog=Math.round(o.prog*100),diff=prog-real;
+  const open=p.fallas.filter(f=>f.estado==="Abierta").length,late=p.actividades.filter(t=>isLate(p,t)).length;
+  const hv=hitosView(p);
+  m.innerHTML=`
+  <div class="phead">
+    <div><h2>${esc(p.nombre)}${p.entidad?` <span class="pill p-ok" style="font-family:var(--f-body);font-size:13px;vertical-align:4px">📍 ${esc(p.entidad)}</span>`:""}</h2>
+      <small>${esc([p.tipo,p.cliente?"Cliente: "+p.cliente:"",p.contrato?"Contrato "+p.contrato:"",c.total+" sitios",p.descripcion].filter(Boolean).join(" · "))}${p.carpeta_url?` <a href="${esc(p.carpeta_url)}" target="_blank" rel="noopener">Carpeta en Drive ↗</a>`:""}</small>
+      ${isAdmin()?`<div class="uact" style="margin-top:8px"><button class="btn sm ghost" id="bEditP" type="button">✎ Editar proyecto</button><button class="btn sm ghost" id="bDelP" type="button" style="color:var(--warn)">Eliminar</button></div>`:""}</div>
+    <div class="pays">${hv.length?'<span class="t">Hitos de pago</span>':""}${hv.map((h,i)=>(i?'<span class="sep"></span>':"")+`<button class="pay ${h.st} ${canEdit()&&h.st!=="done"&&(h.condicion||"manual")==="manual"?"click":""}" data-h="${esc(h.id_hito)}" title="${esc(h.descripcion||"")}${h.condicion&&h.condicion!=="manual"?" · se cumple solo: "+esc(h.condicion):""}">${esc(h.nombre)}${h.st==="done"?" ✓":h.st==="now"?" · en curso":""}</button>`).join("")}</div>
+  </div>
+  ${p.observaciones?`<div class="confirm" style="display:block"><b>Observaciones del contrato:</b> ${esc(p.observaciones).replace(/\n/g,"<br>")}</div>`:""}
+  ${confirmHito?`<div class="confirm">¿Marcar <b>${esc((p.hitos.find(h=>h.id_hito===confirmHito)||{}).nombre)}</b> como cumplido?<button class="btn sm" id="hSi">Sí, marcar</button><button class="btn sm ghost" id="hNo">Cancelar</button></div>`:""}
+  <div class="kpis">
+    <div class="kpi"><span>Avance del proyecto</span><b>${real}%</b><div class="meter" title="La línea marca el avance programado a hoy"><i style="width:${real}%"></i><em style="left:${prog}%"></em></div>
+      <div class="sub">Programado a hoy: ${prog}% · ${diff>2?`<strong>${diff} puntos atrás</strong>`:"va a tiempo"}</div></div>
+    <div class="kpi"><span>Sitios entregados</span><b>${c.entregados}/${c.total}</b><div class="sub">Instalados: ${c.instalados}/${c.total}</div></div>
+    <div class="kpi ${open?"alert":""}"><span>Fallas abiertas</span><b>${open}</b><div class="sub">${p.fallas.length-open} resueltas</div></div>
+    <div class="kpi ${late?"alert":""}"><span>Actividades atrasadas</span><b>${late}</b><div class="sub">de ${p.actividades.filter(t=>taskState(p,t)!=="done").length} abiertas</div></div>
+  </div>
+  <div class="tabs" role="tablist">${[["avance","Avance",late,true],["log","Bitácora de campo",p.registros.length],["fotos","Fotografías",(p.fotos||[]).length],["inv","Inventario",(p.inventario||[]).length],["docs","Documentos",p.documentos.length],["sites","Sitios",c.total],["fails","Fallas",open,true]]
+    .map(([k,l,n,hot])=>`<button class="tab" role="tab" data-k="${k}" aria-selected="${k===tab}">${l}<span class="count tnum ${hot&&n?"hot":""}">${n}</span></button>`).join("")}</div>
+  <div class="panel" id="panel"></div>`;
+  m.querySelectorAll(".tab").forEach(b=>b.onclick=()=>{tab=b.dataset.k;store.set("pp_tab",tab);renderMain()});
+  const be=$("#bEditP");if(be)be.onclick=()=>{view="editar";NP=null;confirmDel=false;renderProjects();renderMain()};
+  const bd=$("#bDelP");if(bd)bd.onclick=()=>{view="editar";NP=null;confirmDel=true;renderProjects();renderMain();setTimeout(()=>{const x=$("#delSi");if(x)x.scrollIntoView({block:"center"})},50)};
+  m.querySelectorAll(".pay.click").forEach(b=>b.onclick=()=>{confirmHito=b.dataset.h;renderMain()});
+  if(confirmHito){$("#hNo").onclick=()=>{confirmHito=null;renderMain()};$("#hSi").onclick=()=>act({action:"marcarHito",id_proyecto:p.id_proyecto,id_hito:confirmHito},"Hito marcado como cumplido",()=>{const h=p.hitos.find(x=>x.id_hito===confirmHito);if(h)h.estado="Cumplido";confirmHito=null})}
+  renderPanel();
+}
+function renderPanel(){
+  const p=P(),el=$("#panel");if(!p||!el)return;
+  ({avance:panelAvance,log:panelLog,fotos:panelFotos,inv:panelInv,docs:panelDocs,sites:panelSites,fails:panelFails}[tab]||panelAvance)(p,el);
+}
+
+/* ----- Avance ----- */
+function ganttHTML(p){
+  const ds=p.etapas.flatMap(s=>[D(s.inicio_plan),D(s.fin_plan)]).filter(Boolean);
+  if(!ds.length)return '<div class="empty">Las etapas no tienen fechas. Agrégalas en la hoja Etapas.</div>';
+  let A=new Date(Math.min(...ds)),B=new Date(Math.max(...ds));A=new Date(A.getFullYear(),A.getMonth(),1);B=new Date(B.getFullYear(),B.getMonth()+1,1);
+  const span=B-A,x=d=>Math.max(0,Math.min(100,(d-A)/span*100));
+  const months=[];for(let d=new Date(A);d<B;d=new Date(d.getFullYear(),d.getMonth()+1,1))months.push(`<span style="left:${x(d)}%">${MES[d.getMonth()]}${d.getMonth()===0?" "+String(d.getFullYear()).slice(2):""}</span>`);
+  const h=D(HOY),showT=h>=A&&h<=B,tx=x(h);
+  return `<div class="gwrap"><div class="gantt"><div class="grow"><span></span><div class="months">${months.join("")}</div><span></span></div><div class="gbody">
+  ${p.etapas.map(s=>{const r=realOf(p,s),[lab,cls]=stageStatus(p,s),a=D(s.inicio_plan),b=D(s.fin_plan);const l=a?x(a):0,w=a&&b?Math.max(1.5,x(b)-l):0;
+    const man=s.medida_avance==="manual"&&canEdit();
+    return `<div class="grow"><div class="gn">${esc(s.nombre)}<small>${fmt(s.inicio_plan)} – ${fmt(s.fin_plan)}${s.medida_avance!=="manual"?` · por ${esc(s.medida_avance)}`:""}${+s.peso?` · vale ${+s.peso}%`:""}</small></div>
+      <div class="track">${w?`<div class="gbar ${lab==="Atrasada"?"late":""}" style="left:${l}%;width:${w}%"><i style="width:${r*100}%"></i>${man?`<button class="pct tnum" data-e="${esc(s.id_etapa)}" title="Cambiar avance">${Math.round(r*100)}%</button>`:`<b class="tnum">${Math.round(r*100)}%</b>`}</div>`:""}${showT?`<div class="today" style="left:${tx}%"></div>`:""}</div>
+      <span class="gstat"><span class="pill ${cls}">${lab}</span></span></div>
+      ${editEtapa===s.id_etapa?`<form class="gedit" data-e="${esc(s.id_etapa)}"><label for="ge">Avance de ${esc(s.nombre)}</label><input id="ge" type="number" min="0" max="100" value="${Math.round(r*100)}"> %<button class="btn sm" type="submit">Guardar</button><button class="btn sm ghost" type="button" id="geNo">Cancelar</button></form>`:""}`}).join("")}
+  </div></div></div>`;
+}
+function taskHTML(p,t){
+  const st=taskState(p,t),late=isLate(p,t),c=cnt(p);
+  const prog=t.medida_auto?`<div class="tprog"><div class="meter"><i style="width:${c.total?(t.medida_auto==="instalados"?c.instalados:c.entregados)/c.total*100:0}%"></i></div><span class="tnum">${t.medida_auto==="instalados"?c.instalados:c.entregados}/${c.total} sitios</span></div>`:"";
+  const due=late?`<span class="pill p-warn">Atrasada · venció ${fmt(t.fecha_limite)}</span>`:t.fecha_limite?`<span>Vence ${fmt(t.fecha_limite)}</span>`:"";
+  const actn=t.medida_auto?`<span class="auto">Se actualiza desde campo</span>`:canEdit()?
+    `<span>${st!=="todo"?`<button class="mv" data-mv="-1" data-id="${esc(t.id_actividad)}" aria-label="Regresar ${esc(t.titulo)}">←</button>`:""}</span><span>${st!=="done"?`<button class="mv" data-mv="1" data-id="${esc(t.id_actividad)}">${st==="todo"?"Iniciar →":"Terminar ✓"}</button>`:""}</span>`:"";
+  return `<div class="task ${late?"late":""}"><b>${esc(t.titulo)}</b><div class="tmeta">${t.etapa?`<span>${esc(t.etapa)}</span><span>·</span>`:""}<span>${esc(t.responsable||"")}</span></div>${prog}<div class="tmeta">${due}</div><div class="tact">${actn}</div></div>`;
+}
+function panelAvance(p,el){
+  const tasks=p.actividades.filter(t=>match(`${t.titulo} ${t.etapa} ${t.responsable}`));
+  const cols=[["todo","Por hacer"],["doing","En curso"],["done","Hecho"]];
+  const resp=[...new Set(["Responsable de campo","Cuadrilla de campo","Gerente de proyecto","Compras",USER.nombre,...p.actividades.map(t=>t.responsable).filter(Boolean)])];
+  const cs=p.etapas.find(s=>realOf(p,s)<1&&D(s.inicio_plan)&&D(HOY)>=D(s.inicio_plan))||p.etapas[0]||{};
+  const d7=new Date(D(HOY).getTime()+7*864e5);
+  el.innerHTML=`<div class="h4">Avance por etapa</div>${ganttHTML(p)}<div class="h4">Actividades</div>
+    <div class="board">${cols.map(([k,l])=>{const list=tasks.filter(t=>taskState(p,t)===k).sort((a,b)=>isLate(p,b)-isLate(p,a)||String(a.fecha_limite).localeCompare(String(b.fecha_limite)));
+      return `<div class="col"><h3>${l}<span class="count tnum">${list.length}</span></h3>${list.map(t=>taskHTML(p,t)).join("")||'<span style="font-size:12.5px;color:var(--mute)">Sin actividades</span>'}</div>`}).join("")}</div>
+    ${canEdit()?`<form class="addt" id="addT" novalidate>
+      <div class="wide"><label for="nt">Nueva actividad</label><input id="nt" type="text" placeholder="Ej. Tramitar permiso de instalación en el sitio 31"></div>
+      <div><label for="ne">Etapa</label><select id="ne">${p.etapas.map(s=>`<option ${s.nombre===cs.nombre?"selected":""}>${esc(s.nombre)}</option>`).join("")}</select></div>
+      <div><label for="nw">Responsable</label><input id="nw" list="respList" value="Responsable de campo"><datalist id="respList">${resp.map(r=>`<option value="${esc(r)}">`).join("")}</datalist></div>
+      <div><label for="nd">Fecha límite</label><input id="nd" type="date" value="${iso(d7)}"></div>
+      <button class="btn dark" type="submit">Agregar</button></form>`:""}`;
+  el.querySelectorAll("button.pct").forEach(b=>b.onclick=()=>{editEtapa=b.dataset.e;renderPanel()});
+  const ge=el.querySelector("form.gedit");
+  if(ge){$("#geNo").onclick=()=>{editEtapa=null;renderPanel()};ge.onsubmit=e=>{e.preventDefault();const v=Math.max(0,Math.min(100,+$("#ge").value||0));
+    act({action:"avanceManual",id_proyecto:p.id_proyecto,id_etapa:ge.dataset.e,avance:v},"Avance actualizado",()=>{const s=p.etapas.find(x=>x.id_etapa===ge.dataset.e);if(s)s.avance_manual=v;editEtapa=null})}}
+  el.querySelectorAll("[data-mv]").forEach(b=>b.onclick=()=>{const t=p.actividades.find(x=>x.id_actividad===b.dataset.id);const order=["Por hacer","En curso","Hecho"];
+    const nx=order[Math.max(0,Math.min(2,order.indexOf(t.estado||"Por hacer")+ +b.dataset.mv))];const prev=t.estado;t.estado=nx;renderMain();
+    apiPost({action:"moverActividad",id_proyecto:p.id_proyecto,id_actividad:t.id_actividad,estado:nx}).then(()=>toast(`“${t.titulo}” · ${nx}`)).catch(e=>{t.estado=prev;renderMain();toast(e.message,true)})});
+  const f=$("#addT");
+  if(f)f.onsubmit=e=>{e.preventDefault();const t=$("#nt").value.trim();if(!t){$("#nt").focus();toast("Escribe el título de la actividad.",true);return}
+    act({action:"crearActividad",id_proyecto:p.id_proyecto,titulo:t,etapa:$("#ne").value,responsable:$("#nw").value.trim(),fecha_limite:$("#nd").value},"Actividad agregada",j=>{p.actividades.push(j.actividad)})};
+}
+
+/* ----- Bitácora ----- */
+function thumb(id){return `<a href="https://drive.google.com/file/d/${encodeURIComponent(id)}/view" target="_blank" rel="noopener" title="Abrir foto"><img src="https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w240" alt="Foto" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'Foto ↗'}))"></a>`}
+function panelLog(p,el){
+  const types=["Todos","Proceso","Falla","Observacion","Entrega"];
+  const rows=p.registros.filter(r=>(logFilter==="Todos"||r.tipo===logFilter)&&match(`${r.descripcion} ${r.id_sitio} ${TYPE_LBL[r.tipo]} ${r.tecnico} ${r.causa} ${r.solucion}`));
+  el.innerHTML=`<div class="filters">${types.map(t=>`<button class="chip" data-f="${t}" aria-pressed="${t===logFilter}">${t==="Todos"?"Todos":TYPE_LBL[t]}</button>`).join("")}</div>
+  ${rows.length?`<div class="feed">${rows.slice(0,logLimit).map(r=>`
+    <article class="entry"><div class="etype ty-${esc(r.tipo)}" aria-hidden="true">${ICONS[r.tipo]||""}</div>
+      <div style="min-width:0">
+        <div class="etop"><b>${esc(TYPE_LBL[r.tipo]||r.tipo)} · ${esc(siteName(p,r.id_sitio,r.lugar))}</b><span class="meta tnum">${esc(r.fecha_captura||r.fecha_recepcion)}</span>${r.estado_envio!=="Procesado"?`<span class="pill p-pend">${esc(r.estado_envio||"Recibido")}</span>`:""}</div>
+        <p>${esc(r.descripcion)}${r.causa?` <b>Causa:</b> ${esc(r.causa)}.`:""}${r.tipo==="Falla"?(r.solucion?` <b>Solución:</b> ${esc(r.solucion)}.`:" Queda abierta."):""}${r.tipo==="Entrega"?`${(r.materiales||[]).length?` <b>Material:</b> ${esc(r.materiales.join(", "))}.`:""}${r.recibe?` <b>Recibe:</b> ${esc(r.recibe)}${r.cargo_recibe?", "+esc(r.cargo_recibe):""}.`:""}`:""}</p>
+        ${r.fotos_ids.length?`<div class="thumbs">${r.fotos_ids.slice(0,6).map(thumb).join("")}</div>`:""}
+        <div class="emeta">${r.lat?`<a href="https://www.google.com/maps?q=${encodeURIComponent(r.lat+","+r.lng)}" target="_blank" rel="noopener">📍 Ver ubicación</a>`:"<span>Sin GPS</span>"}<span>${esc(r.tecnico||"")}</span><span>${r.fotos_ids.length} foto${r.fotos_ids.length===1?"":"s"}</span>${r.firma_id?"<span>Acta firmada</span>":""}${r.tipo==="Proceso"&&/^s/i.test(r.terminado)?'<span style="color:var(--ok);font-weight:600">Sumó al avance</span>':""}${r.archivo_pdf_url?`<a href="${esc(r.archivo_pdf_url)}" target="_blank" rel="noopener">${r.tipo==="Entrega"?"Ver acta PDF":"Ver PDF"} ↗</a>`:""}</div>
+      </div></article>`).join("")}</div>${rows.length>logLimit?`<button class="btn sm ghost more" id="bMore">Ver más (${rows.length-logLimit})</button>`:""}`
+  :`<div class="empty">Todavía no hay registros${logFilter!=="Todos"?" de este tipo":""}. Llegan desde la app de campo.</div>`}`;
+  el.querySelectorAll(".chip").forEach(b=>b.onclick=()=>{logFilter=b.dataset.f;logLimit=40;renderPanel()});
+  const bm=$("#bMore");if(bm)bm.onclick=()=>{logLimit+=40;renderPanel()};
+}
+
+/* ----- Fotografías ----- */
+const ETAPAS_FOTO=["Levantamiento","Antes","Durante","Después"];
+const fkey=f=>f.id_sitio==="S00"?"S00|"+(f.lugar||""):f.id_sitio;
+const photoURL=id=>`https://drive.google.com/file/d/${encodeURIComponent(id)}/view`;
+const photoIMG=(id,w)=>`<img src="https://drive.google.com/thumbnail?id=${encodeURIComponent(id)}&sz=w${w||400}" alt="" loading="lazy" onerror="this.replaceWith(Object.assign(document.createElement('span'),{textContent:'Abrir foto ↗'}))">`;
+function panelFotos(p,el){
+  const fotos=(p.fotos||[]).filter(f=>match(`${f.etapa} ${f.nota} ${f.id_sitio} ${f.lugar} ${f.tecnico} ${siteName(p,f.id_sitio,f.lugar)}`));
+  const groups={};fotos.forEach(f=>{const k=fkey(f);(groups[k]=groups[k]||[]).push(f)});
+  const keys=Object.keys(groups).sort((a,b)=>String(groups[b][0].fecha_captura).localeCompare(String(groups[a][0].fecha_captura)));
+  if(!keys.length){el.innerHTML=`<div class="empty">${(p.fotos||[]).length?"No hay fotos que coincidan con la búsqueda.":"Todavía no hay fotografías. Llegan desde la app de campo en “Fotografías del proceso”, ordenadas por sitio, fecha y etapa."}</div>`;return}
+  if(!groups[fotoSitio])fotoSitio=keys[0];
+  const list=groups[fotoSitio],f0=list[0],num=+String(f0.id_sitio).replace(/\D/g,"");const s=p.sitios.find(x=>x.numero===num)||{};
+  const dias=[...new Set(list.map(f=>String(f.fecha_captura).slice(0,10)))];
+  el.innerHTML=`<div class="sitepick" role="group" aria-label="Sitio">${keys.map(k=>{const g=groups[k];return `<button class="chip" data-k="${esc(k)}" aria-pressed="${k===fotoSitio}">${esc(siteName(p,g[0].id_sitio,g[0].lugar))}<b>${g.length}</b></button>`}).join("")}</div>
+  <div class="fhead"><div><b>${esc(siteName(p,f0.id_sitio,f0.lugar))}</b><small>${esc(s.municipio||"")}${s.municipio?" · ":""}${list.length} foto${list.length===1?"":"s"} · ${dias.length} día${dias.length===1?"":"s"} de captura (${esc(dias.map(fmt).join(", "))})</small></div>
+    <div class="links">${s.carpeta_url?`<a href="${esc(s.carpeta_url)}" target="_blank" rel="noopener">Carpeta del sitio ↗</a>`:""}${s.memoria_pdf_url?`<a href="${esc(s.memoria_pdf_url)}" target="_blank" rel="noopener">Memoria PDF ↗</a>`:""}${s.memoria_doc_url?`<a href="${esc(s.memoria_doc_url)}" target="_blank" rel="noopener">Memoria editable ↗</a>`:""}
+    ${canEdit()&&num?`<button class="btn sm dark" id="bMem" type="button">${s.memoria_pdf_url?"Regenerar memoria":"Generar memoria"}</button>`:""}</div></div>
+  ${ETAPAS_FOTO.map((e,i)=>{const g=list.filter(f=>f.etapa===e).sort((a,b)=>String(a.fecha_captura).localeCompare(String(b.fecha_captura)));if(!g.length)return "";
+    return `<section class="etapa"><h4><span class="pill p-pend">${i+1}</span>${e}<span class="count">${g.length}</span></h4><div class="gal">${g.map(f=>`<a class="ph" href="${esc(f.url||photoURL(f.file_id))}" target="_blank" rel="noopener"><span class="im">${f.file_id?photoIMG(f.file_id):"Foto"}</span><span class="c">${esc(f.nota||e)}<em>${esc(String(f.fecha_captura).slice(0,16))} · ${esc(f.tecnico||"")}${f.lat?" · GPS":""}</em></span></a>`).join("")}</div></section>`}).join("")}`;
+  el.querySelectorAll("[data-k]").forEach(b=>b.onclick=()=>{fotoSitio=b.dataset.k;renderPanel()});
+  const bm=$("#bMem");if(bm)bm.onclick=()=>{bm.disabled=true;bm.textContent="Generando memoria…";
+    apiPost({action:"regenerarMemoria",id_proyecto:p.id_proyecto,sitio:num}).then(async j=>{toast(`<b>Memoria lista.</b> <a href="${esc(j.url)}" target="_blank" rel="noopener" style="color:#fff">Abrir PDF ↗</a>`,false,true);await load(true)}).catch(e=>{bm.disabled=false;bm.textContent="Regenerar memoria";toast(e.message,true)})};
+}
+
+/* ----- Inventario ----- */
+const norm=s=>String(s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().trim();
+function catMatch(c,i){return (c.inciso&&i.inciso)?String(c.inciso).trim()===String(i.inciso).trim():norm(c.bien)===norm(i.bien)}
+function checklist(p){
+  const items=p.inventario||[],used=new Set();
+  const rows=(p.catalogo||[]).map(c=>{const m=items.filter(i=>catMatch(c,i));m.forEach(i=>used.add(i.id_item));
+    const ent=m.filter(i=>i.id_acta).reduce((a,i)=>a+(+i.cantidad||0),0),cap=m.filter(i=>!i.id_acta).reduce((a,i)=>a+(+i.cantidad||0),0),con=+c.cantidad_contratada||0;
+    const st=con&&ent>=con?["Completo","p-ok"]:ent>0?["Parcial","p-pend"]:cap>0?["Capturado sin acta","p-pend"]:["Pendiente","p-warn"];
+    return {c,ent,cap,con,st,sitios:[...new Set(m.map(i=>i.id_sitio))].length}});
+  const extra=items.filter(i=>!used.has(i.id_item));
+  return {rows,extra};
+}
+function panelInv(p,el){
+  const views=[["check","Checklist del contrato"],["bienes","Bienes capturados"],["actas","Actas de entrega"],["cat","Catálogo"]];
+  const actas=p.actas||[],items=(p.inventario||[]);
+  const chips=`<div class="filters" role="group" aria-label="Vista">${views.map(([k,l])=>`<button class="chip" data-v="${k}" aria-pressed="${k===invView}">${l}${k==="bienes"?` · ${items.length}`:k==="actas"?` · ${actas.length}`:k==="cat"?` · ${(p.catalogo||[]).length}`:""}</button>`).join("")}</div>`;
+  let body="";
+  if(invView==="check"){
+    if(!(p.catalogo||[]).length)body=`<div class="empty">Este proyecto no tiene catálogo de bienes. ${isAdmin()?'Cárgalo en la vista “Catálogo” pegándolo desde Excel.':'Pide al administrador que lo cargue.'}</div>`;
+    else{const {rows,extra}=checklist(p);const T=rows.reduce((a,r)=>({con:a.con+r.con,ent:a.ent+r.ent,cap:a.cap+r.cap}),{con:0,ent:0,cap:0});
+      const comp=rows.filter(r=>r.st[0]==="Completo").length;let sec=null;
+      body=`<div class="invsum"><div class="kpi"><span>Entregado con acta</span><b class="tnum">${T.con?Math.round(Math.min(T.ent,T.con)/T.con*100):0}%</b><div class="sub">${T.ent} de ${T.con} piezas contratadas</div></div>
+        <div class="kpi"><span>Partidas completas</span><b class="tnum">${comp}/${rows.length}</b><div class="sub">del catálogo del contrato</div></div>
+        <div class="kpi ${T.cap?"alert":""}"><span>Capturado sin acta</span><b class="tnum">${T.cap}</b><div class="sub">piezas que aún no entran en un acta</div></div>
+        <div class="kpi"><span>Actas generadas</span><b class="tnum">${actas.length}</b><div class="sub">${[...new Set(actas.map(a=>a.id_sitio))].length} sitios</div></div></div>
+      <div class="tscroll"><table><tr><th>Inciso</th><th style="width:30%">Bien</th><th>Marca / modelo</th><th>Unidad</th><th class="n">Contratado</th><th class="n">Entregado</th><th class="n">Sin acta</th><th class="n">Falta</th><th>Estado</th></tr>
+      ${rows.filter(r=>match(`${r.c.inciso} ${r.c.bien} ${r.c.marca} ${r.c.modelo} ${r.c.seccion}`)).map(r=>{let h="";if(r.c.seccion&&r.c.seccion!==sec){sec=r.c.seccion;h=`<tr><td colspan="9" style="background:var(--surface-2);font-weight:700">${esc(sec)}</td></tr>`}
+        const falta=Math.max(0,r.con-r.ent);return h+`<tr><td class="tnum">${esc(r.c.inciso)}</td><td><b>${esc(r.c.bien)}</b>${r.c.descripcion?`<div style="font-size:12.5px;color:var(--mute)">${esc(r.c.descripcion)}</div>`:""}<div class="bar2" title="Entregado / capturado"><i style="width:${r.con?Math.min(100,r.ent/r.con*100):0}%"></i><i style="width:${r.con?Math.min(100-Math.min(100,r.ent/r.con*100),r.cap/r.con*100):0}%"></i></div></td>
+          <td>${esc([r.c.marca,r.c.modelo].filter(Boolean).join(" · "))}</td><td>${esc(r.c.unidad)}</td><td class="n">${r.con}</td><td class="n">${r.ent}</td><td class="n">${r.cap||""}</td><td class="n">${falta?`<b>${falta}</b>`:'<span class="chk-ok">✓</span>'}</td><td><span class="pill ${r.st[1]}">${r.st[0]}</span></td></tr>`}).join("")}</table></div>
+      ${extra.length?`<div class="h4">Capturados fuera del catálogo (${extra.length})</div><p style="font-size:13px;color:var(--mute)">Se registraron con “No está en la lista”. Si deben contar, agrégalos al catálogo con el mismo nombre.</p><div class="tscroll"><table><tr><th>Bien</th><th>Marca / modelo</th><th>Sitio</th><th class="n">Cantidad</th><th>Serie</th><th>Acta</th></tr>${extra.map(i=>`<tr><td>${esc(i.bien)}</td><td>${esc([i.marca,i.modelo].filter(Boolean).join(" · "))}</td><td>${esc(siteName(p,i.id_sitio,i.lugar))}</td><td class="n">${i.cantidad}</td><td class="ser">${esc(i.serie)}</td><td>${i.id_acta?"Sí":"—"}</td></tr>`).join("")}</table></div>`:""}`}
+  } else if(invView==="bienes"){
+    const sites=[...new Set(items.map(i=>i.id_sitio+"|"+(i.id_sitio==="S00"?i.lugar:"")))];
+    const rows=items.filter(i=>(!invSitio||(i.id_sitio+"|"+(i.id_sitio==="S00"?i.lugar:""))===invSitio)&&match(`${i.bien} ${i.marca} ${i.modelo} ${i.serie} ${i.id_sitio} ${i.lugar} ${i.tecnico}`));
+    body=items.length?`<div class="uact" style="font-size:13.5px"><label for="invS">Sitio:</label><select id="invS" style="background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:6px 8px"><option value="">Todos (${items.length})</option>${sites.map(k=>{const [id,l]=k.split("|");return `<option value="${esc(k)}" ${k===invSitio?"selected":""}>${esc(siteName(p,id,l))}</option>`}).join("")}</select></div>
+      <div class="tscroll"><table><tr><th>Sitio</th><th>Fecha</th><th style="width:22%">Bien</th><th>Marca / modelo</th><th class="n">Cant.</th><th style="width:18%">Número de serie</th><th>Fotos</th><th>Acta</th><th>Capturó</th></tr>
+      ${rows.map(i=>{const a=actas.find(x=>x.id_acta===i.id_acta);return `<tr><td>${esc(siteName(p,i.id_sitio,i.lugar))}</td><td class="tnum">${esc(fmt(i.fecha))}</td><td><b>${esc(i.bien)}</b>${i.inciso?`<div style="font-size:12px;color:var(--mute)">Inciso ${esc(i.inciso)}</div>`:""}</td><td>${esc([i.marca,i.modelo].filter(Boolean).join(" · "))}</td><td class="n">${i.cantidad} ${esc(i.unidad||"")}</td><td class="ser">${esc(i.serie)}</td>
+        <td class="th">${(i.fotos_ids||[]).slice(0,3).map(id=>`<a href="${esc(photoURL(id))}" target="_blank" rel="noopener" title="Abrir foto">${photoIMG(id,120)}</a>`).join("")||"—"}</td>
+        <td>${a?(a.pdf_url?`<a href="${esc(a.pdf_url)}" target="_blank" rel="noopener">${esc(fmt(a.fecha))} ↗</a>`:esc(a.id_acta)):'<span class="pill p-pend">Sin acta</span>'}</td><td>${esc(i.tecnico||"")}</td></tr>`}).join("")}</table></div>`
+      :`<div class="empty">Todavía no hay bienes capturados. Se registran desde la app de campo en “Inventario / memoria técnica”.</div>`;
+  } else if(invView==="actas"){
+    body=actas.length?`<div class="tscroll"><table><tr><th>Fecha</th><th>Sitio</th><th style="width:26%">Recibe</th><th>Entrega</th><th class="n">Bienes</th><th>Archivo</th></tr>
+      ${actas.filter(a=>match(`${a.id_sitio} ${a.recibe} ${a.cargo_recibe} ${a.entrega}`)).map(a=>`<tr><td class="tnum">${esc(fmt(a.fecha))}</td><td>${esc(siteName(p,a.id_sitio,""))}</td><td>${esc(a.recibe)}${a.cargo_recibe?`<div style="font-size:12.5px;color:var(--mute)">${esc(a.cargo_recibe)}</div>`:""}</td><td>${esc(a.entrega)}</td><td class="n">${esc(a.n_bienes)}</td>
+        <td>${a.pdf_url?`<a href="${esc(a.pdf_url)}" target="_blank" rel="noopener">PDF ↗</a>`:""}${a.doc_url?` · <a href="${esc(a.doc_url)}" target="_blank" rel="noopener">Editable ↗</a>`:""}</td></tr>`).join("")}</table></div>`
+      :`<div class="empty">Todavía no hay actas. Se generan solas cuando en la app de campo se registra una “Entrega con acta”: incluyen los bienes capturados ese día en el sitio, la firma de quien recibe y las fotos.</div>`;
+  } else {
+    const cat=p.catalogo||[];
+    const prev=catDraft?`<div class="h4">Vista previa · ${catDraft.length} bienes</div><div class="tscroll"><table><tr><th>Inciso</th><th>Sección</th><th>Bien</th><th>Marca</th><th>Modelo</th><th>Descripción</th><th>Unidad</th><th class="n">Cantidad</th></tr>${catDraft.map(c=>`<tr><td>${esc(c.inciso)}</td><td>${esc(c.seccion)}</td><td><b>${esc(c.bien)}</b></td><td>${esc(c.marca)}</td><td>${esc(c.modelo)}</td><td>${esc(c.descripcion)}</td><td>${esc(c.unidad)}</td><td class="n">${c.cantidad_contratada}</td></tr>`).join("")}</table></div>
+      <div class="uact"><button class="btn" id="catSave" type="button">Guardar catálogo (reemplaza el actual)</button><button class="btn ghost" id="catNo" type="button">Cancelar</button></div>`:"";
+    body=`${isAdmin()?`<form class="cardform" id="catF" novalidate><div class="h4">Cargar o reemplazar el catálogo</div>
+      <p style="font-size:13.5px;color:var(--ink-2)">Copia desde Excel las columnas en este orden y pégalas aquí: <b>Inciso · Sección · Bien · Marca · Modelo · Descripción · Unidad · Cantidad contratada</b>. Si copias también la fila de títulos, se ignora. Los técnicos verán esta lista en la app para elegir el bien sin escribirlo.</p>
+      <textarea class="cattext" id="catT" placeholder="1.i&#9;Receptores&#9;Poste para receptor&#9;Sarmex&#9;PA800&#9;Poste metálico de 9 m&#9;Pieza&#9;40">${esc(catText)}</textarea>
+      <div class="uact"><button class="btn dark sm" type="submit">Vista previa</button>${cat.length?'<button class="btn ghost sm" type="button" id="catCopy">Traer el catálogo actual para editarlo</button>':""}</div></form>${prev}`:""}
+      ${cat.length?`<div class="h4">Catálogo actual · ${cat.length} bienes</div><div class="tscroll"><table><tr><th>Inciso</th><th>Sección</th><th style="width:22%">Bien</th><th>Marca</th><th>Modelo</th><th>Descripción</th><th>Unidad</th><th class="n">Contratado</th></tr>${cat.filter(c=>match(`${c.inciso} ${c.bien} ${c.marca} ${c.modelo} ${c.seccion}`)).map(c=>`<tr><td>${esc(c.inciso)}</td><td>${esc(c.seccion)}</td><td><b>${esc(c.bien)}</b></td><td>${esc(c.marca)}</td><td>${esc(c.modelo)}</td><td>${esc(c.descripcion)}</td><td>${esc(c.unidad)}</td><td class="n">${c.cantidad_contratada}</td></tr>`).join("")}</table></div>`
+        :`<div class="empty">Sin catálogo todavía.${isAdmin()?"":" Pide al administrador que lo cargue."}</div>`}`;
+  }
+  el.innerHTML=chips+body;
+  el.querySelectorAll("[data-v]").forEach(b=>b.onclick=()=>{invView=b.dataset.v;renderPanel()});
+  const is=$("#invS");if(is)is.onchange=()=>{invSitio=is.value;renderPanel()};
+  const cf=$("#catF");
+  if(cf){const ta=$("#catT");ta.oninput=()=>catText=ta.value;
+    const cc=$("#catCopy");if(cc)cc.onclick=()=>{catText=(p.catalogo||[]).map(c=>[c.inciso,c.seccion,c.bien,c.marca,c.modelo,c.descripcion,c.unidad,c.cantidad_contratada].map(v=>String(v??"").replace(/[\t\n]/g," ")).join("\t")).join("\n");catDraft=null;renderPanel()};
+    cf.onsubmit=e=>{e.preventDefault();const lines=ta.value.split(/\r?\n/).filter(l=>l.trim());
+      const rows=lines.map(l=>l.split("\t").map(x=>x.trim())).filter((r,i)=>!(i===0&&/inciso|bien/i.test(r.join(" "))&&!/^\d/.test(r[0]||"")));
+      catDraft=rows.map(r=>r.length===1?{inciso:"",seccion:"",bien:r[0],marca:"",modelo:"",descripcion:"",unidad:"Pieza",cantidad_contratada:0}
+        :{inciso:r[0]||"",seccion:r[1]||"",bien:r[2]||"",marca:r[3]||"",modelo:r[4]||"",descripcion:r[5]||"",unidad:r[6]||"Pieza",cantidad_contratada:+String(r[7]||"0").replace(/[^\d.]/g,"")||0}).filter(c=>c.bien);
+      if(!catDraft.length){catDraft=null;toast("No encontré filas con el nombre del bien en la tercera columna.",true);return}renderPanel()};
+    const cs=$("#catSave");if(cs)cs.onclick=()=>{cs.disabled=true;cs.textContent="Guardando…";
+      apiPost({action:"guardarCatalogo",id_proyecto:p.id_proyecto,filas:catDraft}).then(async j=>{catDraft=null;catText="";toast(`Catálogo guardado · ${j.n} bienes`);await load(true)}).catch(e=>{cs.disabled=false;cs.textContent="Guardar catálogo (reemplaza el actual)";toast(e.message,true)})};
+    const cn=$("#catNo");if(cn)cn.onclick=()=>{catDraft=null;renderPanel()};}
+}
+
+/* ----- Documentos ----- */
+function stdName(p){
+  if(!up.tipo||!up.file)return "";
+  const ext=(up.file.name.match(/\.([A-Za-z0-9]{2,5})$/)||[,"pdf"])[1].toLowerCase();
+  return `${p.id_proyecto}_${up.sitio}_${DOC_TIPOS[up.tipo]||camel(up.tipo)}_${HOY}_${up.ver==="Final"?"FINAL":up.ver.toUpperCase()}.${ext}`;
+}
+function upFolder(p){const s=p.etapas.find(x=>x.nombre===up.etapa);return `${p.id_proyecto} / ${s?pad(s.orden)+"_"+plain(s.nombre):"Documentos_generales"} / ${up.sitio} / ${HOY} /`}
+function panelDocs(p,el){
+  const rows=p.documentos.filter(d=>match(`${d.nombre} ${d.etapa} ${d.id_sitio} ${d.nombre_archivo} ${d.subido_por}`));
+  if(!up.etapa)up.etapa=(p.etapas.find(s=>realOf(p,s)<1&&D(s.inicio_plan)&&D(HOY)>=D(s.inicio_plan))||p.etapas[0]||{}).nombre||"";
+  const name=stdName(p);
+  el.innerHTML=`<div class="docbar"><span>Las actas, memorias fotográficas y reportes de campo se crean solos. El resto de la documentación del proyecto se sube aquí.</span><span class="uact">${isAdmin()?(tplUrl?`<a class="btn ghost sm" href="${esc(tplUrl)}" target="_blank" rel="noopener">Abrir plantilla del acta ↗</a>`:`<button type="button" class="btn ghost sm" id="tplBtn">Plantilla del acta</button>`):""}${canEdit()?`<button type="button" class="btn" id="upBtn" aria-expanded="${upOpen}">+ Subir documento</button>`:""}</span></div>
+  ${upOpen?`<form class="upform" id="upForm" novalidate>
+    <div class="ufields">
+      <div><label for="uTipo">Documento</label><select id="uTipo"><option value="">Elige el tipo…</option>${Object.keys(DOC_TIPOS).map(t=>`<option ${t===up.tipo?"selected":""}>${t}</option>`).join("")}</select></div>
+      <div><label for="uEtapa">Etapa</label><select id="uEtapa">${p.etapas.map(s=>`<option ${s.nombre===up.etapa?"selected":""}>${esc(s.nombre)}</option>`).join("")}<option value="" ${up.etapa===""?"selected":""}>General (sin etapa)</option></select></div>
+      <div><label for="uSitio">Sitio</label><select id="uSitio"><option value="GRAL">General (todo el proyecto)</option>${p.sitios.map(s=>`<option value="S${pad(s.numero)}" ${up.sitio==="S"+pad(s.numero)?"selected":""}>Sitio ${pad(s.numero)}${s.nombre?" · "+esc(s.nombre):""}</option>`).join("")}</select></div>
+      <div><label for="uVer">Versión</label><select id="uVer">${["Final","V1","V2","V3","Borrador"].map(v=>`<option ${v===up.ver?"selected":""}>${v}</option>`).join("")}</select></div>
+      <div class="wide"><label for="uTit">Título (opcional)</label><input id="uTit" type="text" value="${esc(up.titulo)}" placeholder="Ej. Orden de compra de postes"></div>
+      <div class="wide"><label for="uNota">Nota (opcional)</label><input id="uNota" type="text" value="${esc(up.nota)}" placeholder="Ej. Autorizada por compras"></div>
+    </div>
+    <div class="ufile"><label class="upick" for="uFile">Elegir archivo</label><input type="file" id="uFile" hidden><span class="uname">${up.file?esc(up.file.name)+" · "+(up.file.size/1048576).toFixed(1)+" MB":"Ningún archivo elegido"}</span></div>
+    <div class="uprev ${name?"ready":""}">${name?`<span>Se guardará como</span><b class="mono-n">${esc(name)}</b><span>Carpeta en Drive: ${esc(upFolder(p))}</span>`:"<span>Elige el tipo de documento y el archivo para ver el nombre estándar.</span>"}</div>
+    <div class="uact"><button type="submit" class="btn" id="uSave" ${name?"":"disabled"}>Guardar en el expediente</button><button type="button" class="btn ghost" id="uCancel">Cancelar</button><span id="uMsg" style="font-size:13px;color:var(--mute)"></span></div>
+  </form>`:""}
+  ${rows.length?`<div class="tscroll"><table>
+    <tr><th style="width:24%">Documento</th><th>Etapa</th><th>Sitio</th><th>Fecha</th><th>Versión</th><th>Estado</th><th style="width:28%">Archivo</th><th>Subió</th></tr>
+    ${rows.map(d=>`<tr><td>${esc(d.nombre)}</td><td>${esc(d.etapa)}</td><td class="tnum">${esc(d.id_sitio)}</td><td class="tnum">${esc(d.fecha)}</td><td>${esc(d.version)}</td>
+      <td><span class="pill ${d.estado==="Falta"||/falta|parcial/i.test(d.estado)?"p-warn":/revisi|elabora|borrador/i.test(d.estado)?"p-pend":"p-ok"}">${esc(d.estado)}</span></td>
+      <td class="file">${d.url?`<a href="${esc(d.url)}" target="_blank" rel="noopener">${esc(d.nombre_archivo)}</a>`:esc(d.nombre_archivo||"—")}</td><td>${esc(d.subido_por||"")}</td></tr>`).join("")}
+  </table></div>`:`<div class="empty">Todavía no hay documentos en este proyecto.</div>`}`;
+  const b=$("#upBtn");if(b)b.onclick=()=>{upOpen=!upOpen;renderPanel()};
+  const tb=$("#tplBtn");if(tb)tb.onclick=()=>{tb.disabled=true;tb.textContent="Buscando…";apiPost({action:"plantillaActa"}).then(j=>{tplUrl=j.url;renderPanel();toast("Edita la plantilla en Google Docs. Conserva los campos entre {{ }}.")}).catch(e=>{tb.disabled=false;tb.textContent="Plantilla del acta";toast(e.message,true)})};
+  if(!upOpen)return;
+  const re=()=>renderPanel();
+  $("#uTipo").onchange=e=>{up.tipo=e.target.value;re()};$("#uEtapa").onchange=e=>{up.etapa=e.target.value;re()};
+  $("#uSitio").onchange=e=>{up.sitio=e.target.value;re()};$("#uVer").onchange=e=>{up.ver=e.target.value;re()};
+  $("#uTit").oninput=e=>up.titulo=e.target.value;$("#uNota").oninput=e=>up.nota=e.target.value;
+  $("#uFile").onchange=e=>{const f=e.target.files[0];if(f){if(f.size>35*1048576){toast("El archivo pasa de 35 MB. Comprímelo o divídelo.",true);return}up.file=f}re()};
+  $("#uCancel").onclick=()=>{upOpen=false;re()};
+  $("#upForm").onsubmit=async e=>{e.preventDefault();if(!stdName(p))return;
+    const bs=$("#uSave");bs.disabled=true;bs.textContent="Subiendo…";$("#uMsg").textContent="No cierres esta página hasta que termine.";
+    try{const b64=await toB64(up.file);
+      const j=await apiPost({action:"subirDocumento",id_proyecto:p.id_proyecto,tipo:up.tipo,titulo:up.titulo.trim(),etapa:up.etapa,sitio:up.sitio,version:up.ver,nota:up.nota.trim(),nombre_original:up.file.name,mime:up.file.type||"application/octet-stream",base64:b64});
+      p.documentos=p.documentos.filter(d=>!(d.estado==="Falta"&&d.nombre===j.documento.nombre&&d.id_sitio===j.documento.id_sitio));
+      p.documentos.unshift(j.documento);Object.assign(up,{tipo:"",titulo:"",sitio:"GRAL",ver:"Final",file:null,nota:""});upOpen=false;renderMain();toast(`<b>Documento guardado.</b> ${esc(j.mensaje)}`,false,true);
+    }catch(err){bs.disabled=false;bs.textContent="Guardar en el expediente";$("#uMsg").textContent="";toast(err.message,true)}};
+}
+function toB64(file){return new Promise((res,rej)=>{const r=new FileReader();r.onload=()=>res(String(r.result).split(",")[1]);r.onerror=()=>rej(new Error("No se pudo leer el archivo."));r.readAsDataURL(file)})}
+
+/* ----- Sitios ----- */
+let editSite=null;
+function panelSites(p,el){
+  const c=cnt(p);
+  const list=p.sitios.filter(s=>match(`S${pad(s.numero)} ${s.nombre} ${s.municipio} ${s.tecnico_asignado}`));
+  const tecs=(DATA.tecnicos||[]);const tecName=id=>(tecs.find(t=>t.id===id)||{}).nombre||id;
+  const es=editSite!=null?p.sitios.find(s=>s.numero===editSite):null;
+  el.innerHTML=`<div class="sitesHead"><span><b class="tnum">${c.entregados}</b> con material entregado · <b class="tnum">${c.instalados}</b> instalados de ${c.total}</span>
+    <span class="legend"><span><i style="background:var(--ok-strong)"></i>Instalado</span><span><i style="background:var(--ok-bg)"></i>Entregado</span><span><i style="background:var(--warn-bg)"></i>Parcial o sin firma</span><span><i style="border:1.5px dashed var(--line)"></i>Pendiente</span></span></div>
+    ${isAdmin()?`<datalist id="dlEstados2">${ESTADOS_MX.map(e=>`<option value="${e}">`).join("")}</datalist><form class="cardform" id="addS1" novalidate><div class="h4">Agregar sitio S${pad(c.total+1)}</div><div class="ufields">
+      <div class="wide"><label for="a1N">Nombre del sitio</label><input id="a1N" placeholder="Puente Tlalixcoyan"></div><div><label for="a1M">Zona o ciudad</label><input id="a1M" placeholder="Tlalixcoyan"></div><div><label for="a1E">Estado</label><input id="a1E" list="dlEstados2" value="${esc(p.entidad||"")}"></div></div>
+      <div class="uact"><button class="btn sm dark" type="submit" id="a1B">Agregar sitio</button><span style="font-size:13px;color:var(--mute)">o</span><input id="addN" type="number" min="1" max="300" value="5" style="width:70px;background:var(--surface);border:1px solid var(--line);border-radius:7px;padding:5px 7px" aria-label="Cuántos sitios vacíos"><button class="btn sm ghost" type="button" id="addSB">sitios sin nombre</button></div></form>`:""}
+    ${list.length?`<div class="sites">${list.map(s=>{const k=s.instalado?"i":s.entregado?"d":s.parcial?"part":"p",lab=k==="i"?"Instalado":k==="d"?"Entregado":k==="part"?"Parcial o sin firma":"Pendiente";
+      const tip=`Sitio ${pad(s.numero)}${s.nombre?" · "+s.nombre:""}${s.municipio?" · "+s.municipio:""}${s.entidad?", "+s.entidad:""} · ${lab}${s.fecha_entrega?" · entrega "+s.fecha_entrega:""}${s.fecha_instalacion?" · instalado "+s.fecha_instalacion:""}${s.tecnico_asignado?" · "+tecName(s.tecnico_asignado):""}`;
+      return canEdit()?`<button type="button" class="site ${k}" data-s="${s.numero}" title="${esc(tip)} · clic para editar" style="border:${k==="p"?"1.5px dashed var(--line)":"none"};${editSite===s.numero?"outline:3px solid var(--accent)":""};cursor:pointer;font:inherit;font-weight:600;font-size:12.5px">S${pad(s.numero)}</button>`
+        :`<div class="site ${k}" title="${esc(tip)}">S${pad(s.numero)}</div>`}).join("")}</div>`:'<div class="empty">Sin sitios.</div>'}
+    ${es?`<form class="cardform" id="edS" novalidate>
+      <div class="h4">Sitio ${pad(es.numero)}</div>
+      <div class="ufields">
+        <div class="wide"><label for="sN">Nombre del sitio</label><input id="sN" type="text" value="${esc(es.nombre||"")}" placeholder="Ej. Puente Tlalixcoyan"></div>
+        <div><label for="sM">Zona, ciudad o municipio</label><input id="sM" type="text" value="${esc(es.municipio||"")}"></div>
+        <div><label for="sE">Estado</label><input id="sE" type="text" list="dlEstados2" value="${esc(es.entidad||p.entidad||"")}"></div>
+        <div><label for="sLa">Latitud</label><input id="sLa" type="text" inputmode="decimal" value="${esc(es.lat||"")}" placeholder="19.1738"></div>
+        <div><label for="sLo">Longitud</label><input id="sLo" type="text" inputmode="decimal" value="${esc(es.lng||"")}" placeholder="-96.1342"></div>
+        <div class="wide"><label for="sT">Técnico asignado</label><select id="sT"><option value="">Sin asignar</option>${tecs.map(t=>`<option value="${esc(t.id)}" ${t.id===es.tecnico_asignado?"selected":""}>${esc(t.nombre)} (${esc(t.id)})</option>`).join("")}</select></div>
+      </div>
+      <div class="uact"><button class="btn sm" type="submit" id="edSB">Guardar sitio</button><button class="btn sm ghost" type="button" id="edSX">Cerrar</button>${es.carpeta_url?`<a class="btn sm ghost" href="${esc(es.carpeta_url)}" target="_blank" rel="noopener">Carpeta ↗</a>`:""}${es.memoria_pdf_url?`<a class="btn sm ghost" href="${esc(es.memoria_pdf_url)}" target="_blank" rel="noopener">Memoria PDF ↗</a>`:""}${es.memoria_doc_url?`<a class="btn sm ghost" href="${esc(es.memoria_doc_url)}" target="_blank" rel="noopener">Memoria editable ↗</a>`:""}<span style="font-size:13px;color:var(--mute)">${es.instalado?"Instalado":es.entregado?"Entregado":es.parcial?"Entrega parcial":"Pendiente"}${es.fecha_entrega?" · entrega "+esc(es.fecha_entrega):""}${es.fecha_instalacion?" · instalado "+esc(es.fecha_instalacion):""}</span></div>
+    </form>`:canEdit()?'<p style="font-size:13px;color:var(--mute)">Da clic en un sitio para ponerle nombre, municipio, coordenadas o técnico asignado.</p>':""}`;
+  el.querySelectorAll("[data-s]").forEach(b=>b.onclick=()=>{editSite=+b.dataset.s;renderPanel();const i=$("#sN");if(i)i.focus()});
+  const fa=$("#addS1");
+  if(fa){fa.onsubmit=e=>{e.preventDefault();const x={nombre:$("#a1N").value.trim(),municipio:$("#a1M").value.trim(),entidad:$("#a1E").value.trim()};if(!x.nombre){toast("Escribe el nombre del sitio.",true);$("#a1N").focus();return}
+      const b=$("#a1B");b.disabled=true;b.textContent="Agregando…";
+      apiPost({action:"agregarSitios",id_proyecto:p.id_proyecto,sitios:[x]}).then(async j=>{toast(`Sitio S${pad(j.desde)} · ${x.nombre} agregado`);await load(true)}).catch(err=>{b.disabled=false;b.textContent="Agregar sitio";toast(err.message,true)})};
+    $("#addSB").onclick=()=>{const n=Math.max(1,Math.min(300,+$("#addN").value||0));const b=$("#addSB");b.disabled=true;
+      apiPost({action:"agregarSitios",id_proyecto:p.id_proyecto,cantidad:n}).then(async j=>{toast(`Se agregaron los sitios S${pad(j.desde)} a S${pad(j.hasta)}. Total: ${j.total}`);await load(true)}).catch(err=>{b.disabled=false;toast(err.message,true)})}}
+  const fe=$("#edS");
+  if(fe){$("#edSX").onclick=()=>{editSite=null;renderPanel()};
+    fe.onsubmit=e=>{e.preventDefault();const v={nombre:$("#sN").value.trim(),municipio:$("#sM").value.trim(),entidad:$("#sE").value.trim(),lat:$("#sLa").value.trim(),lng:$("#sLo").value.trim(),tecnico_asignado:$("#sT").value};
+      const b=$("#edSB");b.disabled=true;
+      apiPost(Object.assign({action:"editarSitio",id_proyecto:p.id_proyecto,numero:es.numero},v)).then(()=>{Object.assign(es,v);editSite=null;renderPanel();toast(`Sitio ${pad(es.numero)} guardado`)}).catch(err=>{b.disabled=false;toast(err.message,true)})}}
+}
+
+/* ----- Fallas ----- */
+function panelFails(p,el){
+  const rows=p.fallas.filter(f=>match(`${f.id_falla} ${f.descripcion} ${f.causa} ${f.solucion} ${f.id_sitio}`)).sort((a,b)=>(a.estado==="Abierta"?0:1)-(b.estado==="Abierta"?0:1));
+  el.innerHTML=rows.length?`<div class="fails">${rows.map(f=>`
+    <div class="fail"><div class="ft"><b>${esc(f.id_falla)} · ${esc(siteName(p,f.id_sitio,(p.registros.find(r=>r.id_registro===f.id_registro)||{}).lugar))}</b><span class="pill ${f.estado==="Abierta"?"p-warn":"p-ok"}">${esc(f.estado)}</span></div>
+      <div style="font-size:14px">${esc(f.descripcion)}</div>
+      <dl class="kv"><dt>Causa</dt><dd>${esc(f.causa||"Por definir")}</dd><dt>Solución</dt><dd>${esc(f.solucion||"Pendiente · tiene actividad asignada")}</dd><dt>Recursos</dt><dd>${esc(f.recursos||"—")}</dd><dt>Fecha</dt><dd class="tnum">${esc(f.fecha)}</dd></dl>
+      ${f.estado==="Abierta"&&canEdit()?(resolving===f.id_falla?`<form class="cardform" data-f="${esc(f.id_falla)}"><div><label for="rs">Solución</label><input id="rs" type="text" placeholder="Qué se hizo"></div><div><label for="rr">Recursos</label><input id="rr" type="text" placeholder="Ej. 2 técnicos · 3 h · conector"></div><div class="uact"><button class="btn sm" type="submit">Marcar resuelta</button><button class="btn sm ghost" type="button" id="rNo">Cancelar</button></div></form>`:`<div><button class="btn sm ghost" data-r="${esc(f.id_falla)}">Registrar solución</button></div>`):""}
+    </div>`).join("")}</div>`:'<div class="empty">Sin fallas registradas. Se reportan desde la app de campo.</div>';
+  el.querySelectorAll("[data-r]").forEach(b=>b.onclick=()=>{resolving=b.dataset.r;renderPanel();const i=$("#rs");if(i)i.focus()});
+  const f=el.querySelector("form.cardform");
+  if(f){$("#rNo").onclick=()=>{resolving=null;renderPanel()};f.onsubmit=e=>{e.preventDefault();const s=$("#rs").value.trim();if(!s){toast("Escribe la solución.",true);return}
+    act({action:"resolverFalla",id_proyecto:p.id_proyecto,id_falla:f.dataset.f,solucion:s,recursos:$("#rr").value.trim()},"Falla resuelta",()=>{const x=p.fallas.find(y=>y.id_falla===f.dataset.f);x.estado="Resuelta";x.solucion=s;x.recursos=$("#rr").value.trim()||x.recursos;p.actividades.filter(t=>t.id_falla===f.dataset.f).forEach(t=>t.estado="Hecho");resolving=null})}}
+}
+
+/* ----- Nuevo proyecto / Editar proyecto ----- */
+const ESTADOS_MX=["Aguascalientes","Baja California","Baja California Sur","Campeche","Chiapas","Chihuahua","Ciudad de México","Coahuila","Colima","Durango","Estado de México","Guanajuato","Guerrero","Hidalgo","Jalisco","Michoacán","Morelos","Nayarit","Nuevo León","Oaxaca","Puebla","Querétaro","Quintana Roo","San Luis Potosí","Sinaloa","Sonora","Tabasco","Tamaulipas","Tlaxcala","Veracruz","Yucatán","Zacatecas"];
+const PLANTILLAS={
+  "Multialerta":[["Levantamiento",0,25,"manual",10],["Compras",20,55,"manual",15],["Entrega",50,95,"entregados",20],["Instalación",90,140,"instalados",35],["Puesta en marcha",135,160,"manual",15],["Mantenimiento",160,180,"manual",5]],
+  "Mantenimiento":[["Diagnóstico",0,18,"manual",20],["Correctivos en sitio",21,75,"instalados",65],["Reporte de mantenimiento",70,82,"manual",15]],
+  "Vacía":[["Etapa 1",0,30,"manual",100]]};
+let NP=null,newTipo=false,pasteOpen=false,confirmDel=false;
+const tiposLista=()=>(DATA&&DATA.tipos&&DATA.tipos.length?DATA.tipos:["Multialerta","Sísmico","Mantenimiento"]);
+function etapasDe(pl){const h=D(HOY),add=n=>iso(new Date(h.getTime()+n*864e5));return PLANTILLAS[pl].map(x=>({nombre:x[0],inicio:add(x[1]),fin:add(x[2]),medida:x[3],peso:x[4]}))}
+function nuevoBase(){
+  return {modo:"nuevo",id_proyecto:"",nombre:"",descripcion:"",cliente:"",contrato:"",entidad:"",observaciones:"",tipo:tiposLista()[0],gerente:USER.nombre,plantilla:"Multialerta",
+    etapas:etapasDe("Multialerta"),sitios:[{entidad:"",municipio:"",nombre:""}],
+    materiales:"",
+    hitos:[{nombre:"1er pago",descripcion:"Anticipo",condicion:"manual"},{nombre:"2º pago",descripcion:"Entrega total de materiales",condicion:"entregados=total"},{nombre:"3er pago",descripcion:"Instalación terminada",condicion:"instalados=total"}]}}
+function editarBase(p){
+  return {modo:"editar",id_proyecto:p.id_proyecto,nombre:p.nombre||"",descripcion:p.descripcion||"",cliente:p.cliente||"",contrato:p.contrato||"",entidad:p.entidad||"",observaciones:p.observaciones||"",
+    tipo:p.tipo||"",gerente:p.gerente||"",etapas:p.etapas.map(s=>({id_etapa:s.id_etapa,nombre:s.nombre,inicio:s.inicio_plan||"",fin:s.fin_plan||"",medida:s.medida_avance||"manual",peso:+s.peso||0}))}}
+function renderNuevo(){
+  const ed=view==="editar";
+  if(!NP||NP.modo!==(ed?"editar":"nuevo"))NP=ed?editarBase(P()):nuevoBase();
+  const m=$("#main");
+  const tipos=[...new Set(tiposLista().concat(NP.tipo?[NP.tipo]:[]))];
+  const med=v=>["manual","entregados","instalados"].map(x=>`<option value="${x}" ${x===v?"selected":""}>${x==="manual"?"Manual (%)":x==="entregados"?"Sitios entregados":"Sitios instalados"}</option>`).join("");
+  const cond=v=>[["manual","Se marca a mano"],["entregados=total","Todos los sitios entregados"],["instalados=total","Todos los sitios instalados"]].map(([x,l])=>`<option value="${x}" ${x===v?"selected":""}>${l}</option>`).join("");
+  const suma=NP.etapas.filter(s=>String(s.nombre).trim()).reduce((a,s)=>a+(+s.peso||0),0);
+  m.innerHTML=`<div class="phead"><div><h2>${ed?"Editar proyecto":"Nuevo proyecto"}</h2><small>${ed?esc(NP.id_proyecto)+" · los cambios se guardan en la hoja índice":"Se crean sus carpetas en Drive, sus sitios y sus filas en la hoja índice."}</small></div><button class="btn ghost sm" id="npX">Cancelar</button></div>
+  <datalist id="dlEstados">${ESTADOS_MX.map(e=>`<option value="${e}">`).join("")}</datalist>
+  <form class="cardform" id="npF" novalidate>
+    <div class="npgrid">
+      <div><label for="np1">Código</label><input id="np1" value="${esc(NP.id_proyecto)}" placeholder="VER-MA" maxlength="12" ${ed?"disabled":""}></div>
+      <div><label for="np2">Nombre del proyecto</label><input id="np2" value="${esc(NP.nombre)}" placeholder="Multialerta Veracruz"></div>
+      <div><label for="npE">Estado</label><input id="npE" list="dlEstados" value="${esc(NP.entidad)}" placeholder="Veracruz"></div>
+      <div><label for="np3">Tipo</label>${newTipo?`<div class="uact" style="flex-wrap:nowrap"><input id="npT" placeholder="Ej. Hidrometeorológico"><button class="btn sm dark" type="button" id="npTok">Guardar</button><button class="btn sm ghost" type="button" id="npTx">×</button></div>`
+        :`<select id="np3">${tipos.map(t=>`<option ${t===NP.tipo?"selected":""}>${esc(t)}</option>`).join("")}${isAdmin()?'<option value="__nuevo">➕ Agregar otro tipo…</option>':""}</select>`}</div>
+      <div><label for="np9">Cliente (quien recibe)</label><input id="np9" value="${esc(NP.cliente)}" placeholder="Secretaría de Protección Civil"></div>
+      <div><label for="np10">Número de contrato</label><input id="np10" value="${esc(NP.contrato)}" placeholder="SPC/ADQ/123/2026"></div>
+      <div class="wide"><label for="np4">Descripción</label><input id="np4" value="${esc(NP.descripcion)}" placeholder="Sistema Multialerta · inundación, huracán y lluvia"></div>
+      <div class="wide"><label for="npO">Observaciones del contrato</label><textarea id="npO" rows="3" placeholder="Ej. Garantía de 12 meses. Penalización del 1% por día de atraso. Entregas parciales por zona.">${esc(NP.observaciones)}</textarea></div>
+      <div><label for="np6">Gerente</label><input id="np6" value="${esc(NP.gerente)}"></div>
+      ${ed?"":`<div><label for="np7">Plantilla de etapas</label><select id="np7">${Object.keys(PLANTILLAS).map(t=>`<option ${t===NP.plantilla?"selected":""}>${t}</option>`).join("")}</select></div>`}
+    </div>
+    ${ed?"":`<div class="h4">Sitios · ${NP.sitios.length}</div>
+    <div class="tscroll"><table class="etable"><tr><th style="width:52px">#</th><th>Estado</th><th>Zona, ciudad o municipio</th><th style="width:38%">Nombre del sitio</th><th></th></tr>
+      ${NP.sitios.map((x,i)=>`<tr><td class="tnum">S${pad(i+1)}</td><td><input list="dlEstados" data-si="${i}" data-k="entidad" value="${esc(x.entidad)}" placeholder="${esc(NP.entidad||"Veracruz")}" aria-label="Estado del sitio ${i+1}"></td><td><input data-si="${i}" data-k="municipio" value="${esc(x.municipio)}" placeholder="Tlalixcoyan" aria-label="Zona o ciudad del sitio ${i+1}"></td><td><input data-si="${i}" data-k="nombre" value="${esc(x.nombre)}" placeholder="Puente Tlalixcoyan" aria-label="Nombre del sitio ${i+1}"></td><td>${NP.sitios.length>1?`<button type="button" class="x" data-dels="${i}" aria-label="Quitar sitio">×</button>`:""}</td></tr>`).join("")}
+    </table></div>
+    <div class="uact"><button type="button" class="btn sm ghost" id="npAddS">+ Agregar sitio</button><span style="font-size:13px;color:var(--mute)">o</span><input id="npNS" type="number" min="1" max="300" value="5" style="width:70px;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:5px 7px" aria-label="Cuántas filas agregar"><button type="button" class="btn sm ghost" id="npAddN">filas más</button><button type="button" class="btn sm ghost" id="npPaste">Pegar desde Excel</button></div>
+    ${pasteOpen?`<div><label for="npPT">Pega las columnas Estado · Zona o ciudad · Nombre del sitio (una fila por sitio)</label><textarea class="cattext" id="npPT" placeholder="Veracruz&#9;Tlalixcoyan&#9;Puente Tlalixcoyan"></textarea><div class="uact" style="margin-top:6px"><button type="button" class="btn sm dark" id="npPok">Agregar estos sitios</button><button type="button" class="btn sm ghost" id="npPx">Cerrar</button></div></div>`:""}`}
+    <div class="h4">Etapas y su peso en el avance</div>
+    <div class="tscroll"><table class="etable"><tr><th style="width:28%">Etapa</th><th>Inicio</th><th>Fin</th><th>El avance se mide por</th><th style="width:110px">Peso %</th><th></th></tr>
+      ${NP.etapas.map((s,i)=>`<tr><td><input data-e="${i}" data-k="nombre" value="${esc(s.nombre)}" aria-label="Nombre de la etapa ${i+1}"></td><td><input type="date" data-e="${i}" data-k="inicio" value="${s.inicio}" aria-label="Inicio"></td><td><input type="date" data-e="${i}" data-k="fin" value="${s.fin}" aria-label="Fin"></td><td><select data-e="${i}" data-k="medida" aria-label="Medida">${med(s.medida)}</select></td>
+        <td><div style="display:flex;align-items:center;gap:4px"><input type="number" min="0" max="100" step="1" data-e="${i}" data-k="peso" value="${+s.peso||0}" aria-label="Porcentaje que representa ${esc(s.nombre)}" style="text-align:right"><span>%</span></div></td>
+        <td>${s.id_etapa?"":`<button type="button" class="x" data-del="${i}" aria-label="Quitar etapa">×</button>`}</td></tr>`).join("")}
+      <tr><td colspan="4" style="text-align:right;font-weight:600">Suma de pesos</td><td class="tnum" id="npSum" style="font-weight:700;color:${suma===100?"var(--ok)":"var(--warn)"}">${suma}%${suma===100?" ✓":""}</td><td></td></tr>
+    </table></div>
+    <p style="font-size:12.5px;color:var(--mute)">El peso es el porcentaje que cada etapa representa del proyecto completo; deben sumar 100%. El avance general se calcula con estos pesos.</p>
+    <div><button type="button" class="btn sm ghost" id="npAddE">+ Agregar etapa</button></div>
+    ${ed?"":`<div class="field"><label for="np8">Materiales por sitio (solo si no vas a usar catálogo de bienes; separados por coma)</label><input id="np8" value="${esc(NP.materiales)}"></div>
+    <div class="h4">Hitos de pago</div>
+    <div class="tscroll"><table class="etable"><tr><th style="width:24%">Hito</th><th>Descripción</th><th>Se cumple cuando…</th><th></th></tr>
+      ${NP.hitos.map((h,i)=>`<tr><td><input data-h="${i}" data-k="nombre" value="${esc(h.nombre)}" aria-label="Hito ${i+1}"></td><td><input data-h="${i}" data-k="descripcion" value="${esc(h.descripcion)}" aria-label="Descripción"></td><td><select data-h="${i}" data-k="condicion" aria-label="Condición">${cond(h.condicion)}</select></td><td><button type="button" class="x" data-delh="${i}" aria-label="Quitar hito">×</button></td></tr>`).join("")}
+    </table></div>
+    <div><button type="button" class="btn sm ghost" id="npAddH">+ Agregar hito</button></div>`}
+    <div class="uact"><button class="btn" type="submit" id="npGo">${ed?"Guardar cambios":"Crear proyecto"}</button><span id="npMsg" style="font-size:13px;color:var(--mute)"></span></div>
+  </form>
+  ${ed?`<div class="cardform" style="border-color:var(--warn-bg)"><div class="h4">Eliminar proyecto</div>
+    <p style="font-size:13.5px;color:var(--ink-2)">El proyecto deja de aparecer en la plataforma y en la app de campo. Sus filas en la hoja y sus carpetas en Drive se conservan, y puedes restaurarlo desde “Archivados”, en el menú de proyectos.</p>
+    <div class="uact">${confirmDel?`<b style="font-size:14px">¿Eliminar “${esc(NP.nombre)}”?</b><button class="btn sm" type="button" id="delSi" style="background:var(--warn);color:#fff">Sí, eliminar</button><button class="btn sm ghost" type="button" id="delNo">Cancelar</button>`:`<button class="btn sm ghost" type="button" id="delP" style="color:var(--warn);border-color:var(--warn)">Eliminar proyecto</button>`}</div></div>`:""}`;
+  const v=id=>{const e=$("#"+id);return e?e.value:undefined};
+  const sync=()=>{if(!ed)NP.id_proyecto=v("np1");NP.nombre=v("np2");NP.entidad=v("npE");if(v("np3")!==undefined&&v("np3")!=="__nuevo")NP.tipo=v("np3");NP.descripcion=v("np4");NP.observaciones=v("npO");NP.gerente=v("np6");NP.cliente=v("np9");NP.contrato=v("np10");
+    if(!ed)NP.materiales=v("np8");
+    m.querySelectorAll("[data-e]").forEach(i=>NP.etapas[+i.dataset.e][i.dataset.k]=i.dataset.k==="peso"?Math.max(0,Math.min(100,+i.value||0)):i.value);
+    m.querySelectorAll("[data-si]").forEach(i=>NP.sitios[+i.dataset.si][i.dataset.k]=i.value);
+    m.querySelectorAll("[data-h]").forEach(i=>NP.hitos[+i.dataset.h][i.dataset.k]=i.value)};
+  const again=()=>{sync();renderNuevo()};
+  m.querySelectorAll('[data-k="peso"]').forEach(i=>i.oninput=()=>{sync();const t=NP.etapas.filter(s=>String(s.nombre).trim()).reduce((a,s)=>a+(+s.peso||0),0);const c=$("#npSum");c.textContent=t+"%"+(t===100?" ✓":"");c.style.color=t===100?"var(--ok)":"var(--warn)"});
+  $("#npX").onclick=()=>{view="proyecto";NP=null;newTipo=false;pasteOpen=false;confirmDel=false;render()};
+  const t3=$("#np3");if(t3)t3.onchange=()=>{if(t3.value==="__nuevo"){sync();newTipo=true;renderNuevo();setTimeout(()=>$("#npT").focus(),30)}};
+  const tx=$("#npTx");if(tx)tx.onclick=()=>{newTipo=false;again()};
+  const tok=$("#npTok");if(tok)tok.onclick=()=>{const t=$("#npT").value.trim();if(!t){toast("Escribe el nombre del tipo.",true);return}tok.disabled=true;
+    apiPost({action:"agregarTipo",tipo:t}).then(j=>{DATA.tipos=j.tipos;sync();NP.tipo=j.tipos.find(x=>x.toLowerCase()===t.toLowerCase())||t;newTipo=false;renderNuevo();toast(`Tipo “${t}” guardado`)}).catch(e=>{tok.disabled=false;toast(e.message,true)})};
+  const p7=$("#np7");if(p7)p7.onchange=e=>{sync();NP.plantilla=e.target.value;NP.etapas=etapasDe(NP.plantilla);renderNuevo()};
+  $("#npAddE").onclick=()=>{sync();const l=NP.etapas[NP.etapas.length-1];NP.etapas.push({nombre:"",inicio:l?l.fin:HOY,fin:l?l.fin:HOY,medida:"manual",peso:0});renderNuevo()};
+  const ah=$("#npAddH");if(ah)ah.onclick=()=>{sync();NP.hitos.push({nombre:"",descripcion:"",condicion:"manual"});renderNuevo()};
+  const nuevaFila=()=>{const l=NP.sitios[NP.sitios.length-1]||{};return {entidad:l.entidad||NP.entidad||"",municipio:"",nombre:""}};
+  const as=$("#npAddS");if(as)as.onclick=()=>{sync();NP.sitios.push(nuevaFila());renderNuevo()};
+  const an=$("#npAddN");if(an)an.onclick=()=>{sync();const n=Math.max(1,Math.min(300,+$("#npNS").value||1));for(let i=0;i<n;i++)NP.sitios.push(nuevaFila());renderNuevo()};
+  const pb=$("#npPaste");if(pb)pb.onclick=()=>{pasteOpen=!pasteOpen;again()};
+  const px=$("#npPx");if(px)px.onclick=()=>{pasteOpen=false;again()};
+  const pk=$("#npPok");if(pk)pk.onclick=()=>{sync();const rows=$("#npPT").value.split(/\r?\n/).map(l=>l.split("\t").map(x=>x.trim())).filter(r=>r.join("").trim()).filter((r,i)=>!(i===0&&/estado|nombre/i.test(r.join(" "))));
+    if(!rows.length){toast("No hay filas para agregar.",true);return}
+    const nuevos=rows.map(r=>r.length===1?{entidad:NP.entidad||"",municipio:"",nombre:r[0]}:r.length===2?{entidad:NP.entidad||"",municipio:r[0],nombre:r[1]}:{entidad:r[0],municipio:r[1],nombre:r.slice(2).join(" ")});
+    NP.sitios=NP.sitios.filter(x=>x.nombre||x.municipio||x.entidad).concat(nuevos);pasteOpen=false;renderNuevo();toast(`${nuevos.length} sitios agregados a la lista`)};
+  m.querySelectorAll("[data-dels]").forEach(b=>b.onclick=()=>{sync();NP.sitios.splice(+b.dataset.dels,1);renderNuevo()});
+  m.querySelectorAll("[data-del]").forEach(b=>b.onclick=()=>{sync();NP.etapas.splice(+b.dataset.del,1);renderNuevo()});
+  m.querySelectorAll("[data-delh]").forEach(b=>b.onclick=()=>{sync();NP.hitos.splice(+b.dataset.delh,1);renderNuevo()});
+  const dp=$("#delP");if(dp)dp.onclick=()=>{sync();confirmDel=true;renderNuevo()};
+  const dn=$("#delNo");if(dn)dn.onclick=()=>{confirmDel=false;again()};
+  const ds=$("#delSi");if(ds)ds.onclick=async()=>{ds.disabled=true;ds.textContent="Eliminando…";
+    try{await apiPost({action:"archivarProyecto",id_proyecto:NP.id_proyecto});toast(`Proyecto ${NP.id_proyecto} eliminado (archivado)`);view="proyecto";NP=null;confirmDel=false;cur="";await load(true)}
+    catch(e){ds.disabled=false;ds.textContent="Sí, eliminar";toast(e.message,true)}};
+  $("#npF").onsubmit=async e=>{e.preventDefault();sync();
+    const et=NP.etapas.filter(s=>String(s.nombre).trim()),sum=et.reduce((a,s)=>a+(+s.peso||0),0);
+    const errs=[];if(!ed&&!NP.id_proyecto.trim())errs.push("el código");if(!NP.nombre.trim())errs.push("el nombre");if(!et.length)errs.push("al menos una etapa");
+    if(errs.length){toast("Falta "+errs.join(", ")+".",true);return}
+    if(sum!==100&&sum!==0){toast(`Los pesos de las etapas suman ${sum}%. Deben sumar 100%.`,true);return}
+    const b=$("#npGo");b.disabled=true;b.textContent=ed?"Guardando…":"Creando carpetas y sitios…";
+    const base={nombre:NP.nombre.trim(),descripcion:NP.descripcion.trim(),cliente:NP.cliente.trim(),contrato:NP.contrato.trim(),entidad:NP.entidad.trim(),observaciones:NP.observaciones.trim(),tipo:NP.tipo,gerente:NP.gerente.trim(),etapas:et};
+    try{
+      if(ed){await apiPost({action:"editarProyecto",proyecto:Object.assign({id_proyecto:NP.id_proyecto},base)});view="proyecto";NP=null;toast("Proyecto actualizado");await load(true)}
+      else{const sit=NP.sitios.map(x=>({entidad:(x.entidad||NP.entidad||"").trim(),municipio:(x.municipio||"").trim(),nombre:(x.nombre||"").trim()}));
+        const j=await apiPost({action:"crearProyecto",proyecto:Object.assign({id_proyecto:NP.id_proyecto.trim(),sitios_total:sit.length,sitios:sit,
+          materiales:NP.materiales.split(",").map(s=>s.trim()).filter(Boolean),hitos:NP.hitos.filter(h=>h.nombre.trim())},base)});
+        cur=j.id_proyecto;store.set("pp_proy",cur);view="proyecto";NP=null;tab="avance";toast(`<b>Proyecto ${esc(j.id_proyecto)} creado.</b> Ya tiene sus carpetas en Drive.`,false,true);await load(true)}
+    }catch(err){b.disabled=false;b.textContent=ed?"Guardar cambios":"Crear proyecto";toast(err.message,true)}};
+}
+
+/* ================= acciones ================= */
+function act(body,okMsg,apply){
+  apiPost(body).then(j=>{apply&&apply(j);renderMain();toast(okMsg)}).catch(e=>toast(e.message,true));
+}
+let tt;function toast(html,bad,isHtml){const t=$("#toast");t.className="toast show"+(bad?" bad":"");t[isHtml?"innerHTML":"textContent"]=isHtml?html:String(html).replace(/<[^>]+>/g,"");clearTimeout(tt);tt=setTimeout(()=>t.classList.remove("show"),bad?6000:4500)}
+
+/* ================= sesión ================= */
+function showLogin(msg){$("#vApp").hidden=true;$("#vLogin").hidden=false;$("#lApi").value=API;$("#lErr").hidden=!msg;$("#lErr").textContent=msg||"";if(!API)$(".adv").open=true;$("#lClave").focus()}
+function logout(msg){CLAVE="";store.del("pp_clave");DATA=null;showLogin(msg)}
+$("#fLogin").onsubmit=async e=>{e.preventDefault();
+  const c=$("#lClave").value.trim(),a=$("#lApi").value.trim();
+  if(!a){$("#lErr").hidden=false;$("#lErr").textContent="Falta la URL del servidor (Apps Script).";$(".adv").open=true;return}
+  if(!c){$("#lErr").hidden=false;$("#lErr").textContent="Escribe tu clave.";return}
+  const b=$("#lBtn");b.disabled=true;b.textContent="Entrando…";
+  API=a;try{await apiGet({action:"login",clave:c});CLAVE=c;store.set("pp_clave",c);store.set("pp_api",a);startApp()}
+  catch(err){$("#lErr").hidden=false;$("#lErr").textContent=err.message==="Failed to fetch"?"No se pudo conectar con el servidor. Revisa la URL y tu internet.":err.message}
+  finally{b.disabled=false;b.textContent="Entrar"}};
+function startApp(){$("#vLogin").hidden=true;$("#vApp").hidden=false;load()}
+$("#bOut").onclick=()=>logout();
+$("#bRefresh").onclick=()=>load(true).then(()=>toast("Datos actualizados"));
+$("#bNewP").onclick=()=>{view="nuevo";NP=null;newTipo=false;pasteOpen=false;renderProjects();renderMain()};
+$("#q").addEventListener("input",()=>{if(view==="proyecto")renderPanel()});
+setInterval(()=>{if(CLAVE&&document.visibilityState==="visible"&&view==="proyecto"&&!upOpen&&!editEtapa&&!resolving)load(true)},90000);
+if(CLAVE&&API)startApp();else showLogin();
+})();
+</script>
+</body>
+</html>
